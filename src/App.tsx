@@ -7,6 +7,8 @@ import { InputNode } from './components/node/InputNode';
 import { TextNode } from './components/node/TextNode';
 import StraightEdge from './components/edge/StraightEdge';
 import { useState } from 'react';
+import { Moon, Sun } from "lucide-react"
+
 
 const nodeTypes = {
   input: InputNode,
@@ -57,7 +59,7 @@ export default function App() {
         onClick={toggleColorMode}
         className={`color-mode-toggle ${colorMode}`}
       >
-        Toggle {colorMode === 'dark' ? 'Light' : 'Dark'} Mode
+        {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
       </button>
 
       <ReactFlow

@@ -75,22 +75,29 @@ body,
 
 /* Add these new styles */
 .color-mode-toggle {
+  display: flex;
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
-  padding: 8px 16px;
-  border-radius: 4px;
+  bottom: 125px;
+  left: 14px;
+  width: 28px;
+  height: 28px;
+  z-index: 5;
+  padding: 4px;
+  border-radius: 3px;
   border: none;
   cursor: pointer;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08);
+  justify-content: center;
+  align-items: center;
+
 }
 
-.color-mode-toggle.dark {
+.color-mode-toggle.light {
   background-color: #fff;
   color: #222;
 }
 
-.color-mode-toggle.light {
+.color-mode-toggle.dark {
   background-color: #222;
   color: #fff;
 }
