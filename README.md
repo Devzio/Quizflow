@@ -1,8 +1,8 @@
 
 # Quizflow
 ## Decision-tree-based quiz management tool built with React.js and React Flow
-=======
-** To run the project: **
+
+**To run the project:**
 
 1. Clone the repository
 2. Run `npm install` to install dependencies
