@@ -1,15 +1,14 @@
-<<<<<<< HEAD
+
 # Quizflow
-Decision-tree-based quiz management tool built with React.js and React Flow
-=======
-To run the project:
+## Decision-tree-based quiz management tool built with React.js and React Flow
+
+**To run the project:**
 
 1. Clone the repository
 2. Run `npm install` to install dependencies
 3. Run `npm run dev` to start the development server
 4. Open `http://localhost:5175/` in your browser to view the app
 
-=======
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -64,4 +63,4 @@ export default tseslint.config({
   },
 })
 ```
->>>>>>> af3184d (Initial commit)
+
