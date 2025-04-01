@@ -12,6 +12,11 @@ body,
   height: 100%;
   width: 100%;
 }
+.wrapper__reactflow{
+  width: 100vw;
+  height: 100vh;
+  position: relative
+}
 
 .inputNode {
   display: flex;
@@ -53,4 +58,46 @@ body,
   font-weight: bold;
   line-height: 10px;
   padding-left: 1px;
+}
+
+.dark input {
+  background-color: rgb(53, 53, 53);
+  color: white;
+  padding: 2px;
+  border: 1px solid #2d2d2d;
+  border-radius: 2px;
+  border-style: solid;
+}
+
+.dark input:focus {
+  outline: none;
+}
+
+/* Add these new styles */
+.color-mode-toggle {
+  display: flex;
+  position: absolute;
+  bottom: 125px;
+  left: 14px;
+  width: 28px;
+  height: 28px;
+  z-index: 5;
+  padding: 4px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08);
+  justify-content: center;
+  align-items: center;
+
+}
+
+.color-mode-toggle.light {
+  background-color: #fff;
+  color: #222;
+}
+
+.color-mode-toggle.dark {
+  background-color: #222;
+  color: #fff;
 }

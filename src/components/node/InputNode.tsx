@@ -12,7 +12,7 @@ export function InputNode() {
   const [input, setInput] = useState("")
   const { setNodes } = useReactFlow();
 
-  function handleClick() {
+  function addNode() {
     setNodes((prevNodes) => [
       ...prevNodes,
       {
@@ -37,8 +37,13 @@ export function InputNode() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className="nodrag"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              addNode();
+            }
+          }}
         />
-        <button onClick={handleClick}>Add</button>
+        <button onClick={addNode}>Add</button>
       </div>
       <Handle type="source" position={Position.Bottom} />
       {/* <Handle type="source" position={Position.Bottom} id="b" style={handleStyle} /> */}
