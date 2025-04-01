@@ -6,6 +6,7 @@ import { initialEdges, initialNodes } from './constants';
 import { InputNode } from './components/node/InputNode';
 import { TextNode } from './components/node/TextNode';
 import StraightEdge from './components/edge/StraightEdge';
+import { useState } from 'react';
 
 const nodeTypes = {
   input: InputNode,
@@ -19,6 +20,7 @@ const edgeTypes = {
 }
 
 export default function App() {
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   // Add this type (or use your existing Edge type if you have one)
   type MyEdgeType = Edge;
@@ -45,9 +47,32 @@ export default function App() {
       }, eds)),
     [setEdges],
   );
+  const toggleColorMode = () => {
+    setColorMode(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
+    <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+      <button
+        onClick={toggleColorMode}
+        style={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          zIndex: 10,
+          padding: '8px 16px',
+          borderRadius: 4,
+          border: 'none',
+          backgroundColor: colorMode === 'dark' ? '#fff' : '#222',
+          color: colorMode === 'dark' ? '#222' : '#fff',
+          cursor: 'pointer'
+        }}
+      >
+        Toggle {colorMode === 'dark' ? 'Light' : 'Dark'} Mode
+      </button>
+
       <ReactFlow
+        colorMode={colorMode}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}

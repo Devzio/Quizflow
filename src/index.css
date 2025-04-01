@@ -54,3 +54,16 @@ body,
   line-height: 10px;
   padding-left: 1px;
 }
+
+.dark input {
+  background-color: rgb(53, 53, 53);
+  color: white;
+  padding: 2px;
+  border: 1px solid #2d2d2d;
+  border-radius: 2px;
+  border-style: solid;
+}
+
+.dark input:focus {
+  outline: none;
+}
