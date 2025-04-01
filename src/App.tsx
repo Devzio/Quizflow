@@ -20,7 +20,7 @@ const edgeTypes = {
 }
 
 export default function App() {
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   // Add this type (or use your existing Edge type if you have one)
   type MyEdgeType = Edge;
@@ -52,21 +52,10 @@ export default function App() {
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+    <div className="wrapper__reactflow">
       <button
         onClick={toggleColorMode}
-        style={{
-          position: 'absolute',
-          top: 10,
-          right: 10,
-          zIndex: 10,
-          padding: '8px 16px',
-          borderRadius: 4,
-          border: 'none',
-          backgroundColor: colorMode === 'dark' ? '#fff' : '#222',
-          color: colorMode === 'dark' ? '#222' : '#fff',
-          cursor: 'pointer'
-        }}
+        className={`color-mode-toggle ${colorMode}`}
       >
         Toggle {colorMode === 'dark' ? 'Light' : 'Dark'} Mode
       </button>
