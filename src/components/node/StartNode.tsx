@@ -1,21 +1,18 @@
 import { Handle, Position, Node, NodeProps } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
 
-type TextNode = Node<{ label: string }, 'text'>;
+type StartNode = Node<{ label: string }, 'text'>;
 
-export function TextNode({ data, id }: NodeProps<TextNode>) {
+export function StartNode({ id }: NodeProps<StartNode>) {
   const { deleteElements } = useReactFlow();
   const onDelete = () => {
     deleteElements({ nodes: [{ id }] });
   };
   return (
     <>
-      <Handle type="target" position={Position.Top} />
       <button onClick={onDelete} className='btn-delete'>X</button>
-
       <div className='textNode'>
-
-        <span>{data.label}</span>
+        <span>Start</span>
       </div>
       <Handle type="source" position={Position.Bottom} />
     </>

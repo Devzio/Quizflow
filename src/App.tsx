@@ -1,34 +1,56 @@
-import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlow, useEdgesState, useNodesState } from '@xyflow/react';
+import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlowProvider, ReactFlow, useReactFlow, useEdgesState, useNodesState, reconnectEdge } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { initialEdges, initialNodes } from './constants';
 import { InputNode } from './components/node/InputNode';
 import { TextNode } from './components/node/TextNode';
+import { StartNode } from './components/node/StartNode';
 import StraightEdge from './components/edge/StraightEdge';
+import EdgeWithDeleteButton from './components/edge/EdgeWithDeleteButton';
 import { useState } from 'react';
 import { Moon, Sun } from "lucide-react"
+import { Sidebar } from './components/Sidebar';
+import { DnDProvider, useDnD } from './components/DnDContext';
+import { nanoid } from "nanoid";
+import { EndNode } from './components/node/EndNode';
+
 
 
 const nodeTypes = {
   input: InputNode,
   text: TextNode,
+  start: StartNode,
+  end: EndNode
   // output: OutputNode,
   // default: DefaultNode
 };
 
 const edgeTypes = {
-  'straightEdge': StraightEdge
+  'straightEdge': StraightEdge,
+  'edgedelete': EdgeWithDeleteButton
 }
 
-export default function App() {
+const DnDFlow = () => {
+  const reactFlowWrapper = useRef(null);
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  // Add this type (or use your existing Edge type if you have one)
   type MyEdgeType = Edge;
   const [edges, setEdges, onEdgesChange] = useEdgesState<MyEdgeType>(initialEdges);
+  const { screenToFlowPosition } = useReactFlow();
+  const [type] = useDnD();
 
-  // Add this delete handler
+  const onReconnect = useCallback(
+    (oldEdge: Edge, newConnection: Connection) =>
+      setEdges((els) => reconnectEdge(oldEdge, newConnection, els)),
+    [],
+  );
+
+
+  const toggleColorMode = () => {
+    setColorMode(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   const onNodesDelete = useCallback(
     (deleted: any[]) => {
       setEdges((eds) => {
@@ -45,40 +67,80 @@ export default function App() {
       setEdges((eds) => addEdge({
         ...params,
         animated: true,
-        type: "default"
+        type: "edgedelete"
       }, eds)),
     [setEdges],
   );
-  const toggleColorMode = () => {
-    setColorMode(prev => prev === 'dark' ? 'light' : 'dark');
-  };
+
+  const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+
+      if (!type) {
+        return;
+      }
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const newNode = {
+        id: nanoid(),
+        type,
+        position,
+        data: { label: type === 'text' ? 'New Text' : '' },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [screenToFlowPosition, type]
+  );
 
   return (
-    <div className="wrapper__reactflow">
-      <button
-        onClick={toggleColorMode}
-        className={`color-mode-toggle ${colorMode}`}
-      >
-        {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
-      </button>
-
-      <ReactFlow
-        colorMode={colorMode}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodesDelete={onNodesDelete}  // Add this prop
-        nodeTypes={nodeTypes}
-        fitView
-        edgeTypes={edgeTypes}
-        style={{ backgroundColor: "#F7F9FB" }}
-      >
-        <Background gap={12} size={1} />
-        <MiniMap zoomable pannable />
-        <Controls />
-      </ReactFlow>
+    <div className="dndflow">
+      <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+        <ReactFlow
+          colorMode={colorMode}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onReconnect={onReconnect}
+          onNodesDelete={onNodesDelete}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          fitView
+          style={{ backgroundColor: "#F7F9FB" }}
+        >
+          <Background gap={12} size={1} />
+          <MiniMap zoomable pannable />
+          <Controls />
+        </ReactFlow>
+        <button
+          onClick={toggleColorMode}
+          className={`color-mode-toggle ${colorMode}`}
+        >
+          {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
+        </button>
+      </div>
+      <Sidebar colorMode={colorMode} />
     </div>
   );
-}
+};
+
+export default () => (
+  <ReactFlowProvider>
+    <DnDProvider>
+      <DnDFlow />
+    </DnDProvider>
+  </ReactFlowProvider>
+);
