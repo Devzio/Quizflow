@@ -1,12 +1,9 @@
 import { useDnD } from './DnDContext';
 import { Moon, Sun } from "lucide-react";
 
-type SidebarProps = {
-  colorMode: 'light' | 'dark';
-  toggleColorMode: () => void;
-};
 
-export function Sidebar({ colorMode, toggleColorMode }: SidebarProps) {
+
+export function Sidebar() {
   const [, setType] = useDnD();
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
@@ -18,12 +15,13 @@ export function Sidebar({ colorMode, toggleColorMode }: SidebarProps) {
   return (
     <div className="sidebar">
       <div
-        className="dndnode input"
-        onDragStart={(event) => onDragStart(event, 'input')}
+        className="dndnode start"
+        onDragStart={(event) => onDragStart(event, 'start')}
         draggable
       >
-        Input Node
+        Start Node
       </div>
+
       <div
         className="dndnode text"
         onDragStart={(event) => onDragStart(event, 'text')}
@@ -31,12 +29,20 @@ export function Sidebar({ colorMode, toggleColorMode }: SidebarProps) {
       >
         Text Node
       </div>
-      <button
+
+      <div
+        className="dndnode input"
+        onDragStart={(event) => onDragStart(event, 'input')}
+        draggable
+      >
+        Input Node
+      </div>
+      {/* <button
         onClick={toggleColorMode}
         className={`color-mode-toggle ${colorMode}`}
       >
         {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
-      </button>
+      </button> */}
     </div>
   );
 }

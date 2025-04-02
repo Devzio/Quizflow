@@ -1,11 +1,13 @@
-import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlowProvider, ReactFlow, useReactFlow, useEdgesState, useNodesState } from '@xyflow/react';
+import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlowProvider, ReactFlow, useReactFlow, useEdgesState, useNodesState, reconnectEdge } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 import { useCallback, useRef } from 'react';
 import { initialEdges, initialNodes } from './constants';
 import { InputNode } from './components/node/InputNode';
 import { TextNode } from './components/node/TextNode';
+import { StartNode } from './components/node/StartNode';
 import StraightEdge from './components/edge/StraightEdge';
+import EdgeWithDeleteButton from './components/edge/EdgeWithDeleteButton';
 import { useState } from 'react';
 import { Moon, Sun } from "lucide-react"
 import { Sidebar } from './components/Sidebar';
@@ -17,12 +19,14 @@ import { nanoid } from "nanoid";
 const nodeTypes = {
   input: InputNode,
   text: TextNode,
+  start: StartNode,
   // output: OutputNode,
   // default: DefaultNode
 };
 
 const edgeTypes = {
-  'straightEdge': StraightEdge
+  'straightEdge': StraightEdge,
+  'edgedelete': EdgeWithDeleteButton
 }
 
 const DnDFlow = () => {
@@ -33,6 +37,13 @@ const DnDFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState<MyEdgeType>(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
+
+  const onReconnect = useCallback(
+    (oldEdge: Edge, newConnection: Connection) =>
+      setEdges((els) => reconnectEdge(oldEdge, newConnection, els)),
+    [],
+  );
+
 
   const toggleColorMode = () => {
     setColorMode(prev => prev === 'dark' ? 'light' : 'dark');
@@ -54,7 +65,7 @@ const DnDFlow = () => {
       setEdges((eds) => addEdge({
         ...params,
         animated: true,
-        type: "default"
+        type: "edgedelete"
       }, eds)),
     [setEdges],
   );
@@ -81,7 +92,7 @@ const DnDFlow = () => {
         id: nanoid(),
         type,
         position,
-        data: { text: type === 'text' ? 'New Text' : '' },
+        data: { label: type === 'text' ? 'New Text' : '' },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -99,6 +110,7 @@ const DnDFlow = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onReconnect={onReconnect}
           onNodesDelete={onNodesDelete}
           onDrop={onDrop}
           onDragOver={onDragOver}
