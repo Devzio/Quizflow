@@ -90,6 +90,18 @@ export const initialNodes = [
     },
     position: { x: 300, y: 300 },
   },
+  {
+    id: '8',
+    type: 'end',
+    data: {
+      label: (
+        <>
+          Question <strong>3C</strong>
+        </>
+      ),
+    },
+    position: { x: 0, y: 400 },
+  },
 ];
 
 export const initialEdges = [
@@ -150,5 +162,26 @@ export const initialEdges = [
     source: '4',
     target: '7',
     label: 'Yes',
+  },
+  {
+    id: 'e5-8',
+    type: 'edgedelete',
+    animated: true,
+    source: '5',
+    target: '8',
+  },
+  {
+    id: 'e6-8',
+    type: 'edgedelete',
+    animated: true,
+    source: '6',
+    target: '8',
+  },
+  {
+    id: 'e7-8',
+    type: 'edgedelete',
+    animated: true,
+    source: '7',
+    target: '8',
   },
 ];

@@ -13,6 +13,7 @@ import { Moon, Sun } from "lucide-react"
 import { Sidebar } from './components/Sidebar';
 import { DnDProvider, useDnD } from './components/DnDContext';
 import { nanoid } from "nanoid";
+import { EndNode } from './components/node/EndNode';
 
 
 
@@ -20,6 +21,7 @@ const nodeTypes = {
   input: InputNode,
   text: TextNode,
   start: StartNode,
+  end: EndNode
   // output: OutputNode,
   // default: DefaultNode
 };
@@ -130,7 +132,7 @@ const DnDFlow = () => {
           {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
         </button>
       </div>
-      <Sidebar colorMode={colorMode} toggleColorMode={toggleColorMode} />
+      <Sidebar colorMode={colorMode} />
     </div>
   );
 };

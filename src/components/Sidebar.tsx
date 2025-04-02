@@ -1,7 +1,7 @@
 import { useDnD } from './DnDContext';
 
 
-export function Sidebar() {
+export function Sidebar(colorMode: string) {
   const [, setType] = useDnD();
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
@@ -10,8 +10,10 @@ export function Sidebar() {
     setType(nodeType);
   };
 
+  console.log(colorMode)
+
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${colorMode === ' ' ? 'dark' : 'dark'}`}>
       <div
         className="dndnode start"
         onDragStart={(event) => onDragStart(event, 'start')}
@@ -34,6 +36,13 @@ export function Sidebar() {
         draggable
       >
         Input Node
+      </div>
+      <div
+        className="dndnode end"
+        onDragStart={(event) => onDragStart(event, 'end')}
+        draggable
+      >
+        End Node
       </div>
       {/* <button
         onClick={toggleColorMode}

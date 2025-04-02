@@ -222,3 +222,11 @@ body {
   height: 40px;
   border-radius: 5px;
 }
+
+.sidebar.dark{
+  background-color: #222;
+  color: white;
+}
+.sidebar.dark .dndnode{
+  border: 1px solid #999;
+}
