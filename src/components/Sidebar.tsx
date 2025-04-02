@@ -1,6 +1,4 @@
 import { useDnD } from './DnDContext';
-import { Moon, Sun } from "lucide-react";
-
 
 
 export function Sidebar() {

@@ -64,7 +64,7 @@ export const initialNodes = [
         </>
       ),
     },
-    position: { x: -150, y: 300 },
+    position: { x: -300, y: 300 },
   },
   {
     id: '6',
@@ -76,7 +76,19 @@ export const initialNodes = [
         </>
       ),
     },
-    position: { x: 150, y: 300 },
+    position: { x: 0, y: 300 },
+  },
+  {
+    id: '7',
+    type: 'text',
+    data: {
+      label: (
+        <>
+          Question <strong>3C</strong>
+        </>
+      ),
+    },
+    position: { x: 300, y: 300 },
   },
 ];
 
@@ -116,11 +128,27 @@ export const initialEdges = [
     label: 'Yes',
   },
   {
+    id: 'e3-6',
+    type: 'default',
+    animated: true,
+    source: '3',
+    target: '6',
+    label: 'No',
+  },
+  {
     id: 'e4-6',
     type: 'default',
     animated: true,
     source: '4',
     target: '6',
+    label: 'No',
+  },
+  {
+    id: 'e4-7',
+    type: 'default',
+    animated: true,
+    source: '4',
+    target: '7',
     label: 'Yes',
   },
 ];
