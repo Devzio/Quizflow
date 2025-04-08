@@ -1,7 +1,8 @@
 import { Background, BaseEdge, EdgeProps, EdgeText, getBezierPath } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
 import { Check, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRef } from 'react';
 
 export default function EdgeWithDeleteButton({
   id,
@@ -36,6 +37,7 @@ export default function EdgeWithDeleteButton({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [edgeLabel, setEdgeLabel] = useState('');
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const handleLabelDoubleClick = () => {
     setIsModalOpen(true);
@@ -48,6 +50,22 @@ export default function EdgeWithDeleteButton({
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        handleModalClose();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   return (
     <>
@@ -88,7 +106,7 @@ export default function EdgeWithDeleteButton({
           y={labelY - 50}
           className="edge-modal"
         >
-          <div className="modal-content">
+          <div className="modal-content" ref={modalRef}>
             <input
               type="text"
               value={edgeLabel}

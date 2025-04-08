@@ -1,7 +1,7 @@
 import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlowProvider, ReactFlow, useReactFlow, useEdgesState, useNodesState, reconnectEdge } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { initialEdges, initialNodes } from './constants';
 import { InputNode } from './components/node/InputNode';
 import { TextNode } from './components/node/TextNode';
@@ -14,6 +14,7 @@ import { Sidebar } from './components/Sidebar';
 import { DnDProvider, useDnD } from './components/DnDContext';
 import { nanoid } from "nanoid";
 import { EndNode } from './components/node/EndNode';
+
 
 
 
@@ -34,6 +35,15 @@ const edgeTypes = {
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
+
+  // disable context menu on right click
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+    document.addEventListener('contextmenu', handleContextMenu);
+    return () => document.removeEventListener('contextmenu', handleContextMenu);
+  }, []);
+
+
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   type MyEdgeType = Edge;
   const [edges, setEdges, onEdgesChange] = useEdgesState<MyEdgeType>(initialEdges);
