@@ -1,5 +1,6 @@
 import { BaseEdge, EdgeProps, getBezierPath } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
+import { useState } from 'react';
 
 export default function EdgeWithDeleteButton({
   id,
@@ -32,6 +33,21 @@ export default function EdgeWithDeleteButton({
     deleteElements({ edges: [{ id }] });
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [edgeLabel, setEdgeLabel] = useState('');
+
+  const handleLabelDoubleClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEdgeLabel(e.target.value);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <BaseEdge
@@ -39,7 +55,7 @@ export default function EdgeWithDeleteButton({
         markerEnd={markerEnd}
         style={style}
       />
-      <foreignObject
+      {/* <foreignObject
         width="20"
         height="20"
         x={labelX - 10}
@@ -50,13 +66,47 @@ export default function EdgeWithDeleteButton({
         <div>
           <button
             className="edgebutton"
-            // onClick={(event) => onEdgeClick(event, id)}
             onClick={() => onEdgeClick()}
           >
             ×
           </button>
         </div>
-      </foreignObject>
+      </foreignObject> */}
+      <text
+        x={labelX}
+        y={labelY}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        className="edge-label"
+        onDoubleClick={handleLabelDoubleClick}
+      >
+        {edgeLabel || 'No Answer'}
+      </text>
+      {isModalOpen && (
+        <foreignObject
+          width="200"
+          height="100"
+          x={labelX - 100}
+          y={labelY - 50}
+          className="edge-modal"
+          requiredExtensions="http://www.w3.org/1999/xhtml"
+        >
+          <div className="modal-content">
+            <input
+              type="text"
+              value={edgeLabel}
+              onChange={handleLabelChange}
+              placeholder="Edge label"
+            />
+            <button onClick={handleModalClose}>Save</button>
+            <button
+              onClick={() => onEdgeClick()}
+            >
+              Delete
+            </button>
+          </div>
+        </foreignObject>
+      )}
     </>
   );
 }
