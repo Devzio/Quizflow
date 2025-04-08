@@ -254,3 +254,8 @@ body {
   color: #424242;
   background-color: #ff0000!important;
 }
+
+.react-flow__edges svg{
+  position: absolute;
+  z-index: 15 !important;
+}
