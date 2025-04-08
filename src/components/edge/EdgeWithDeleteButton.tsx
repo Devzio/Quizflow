@@ -1,4 +1,4 @@
-import { BaseEdge, EdgeProps, getBezierPath } from '@xyflow/react';
+import { Background, BaseEdge, EdgeProps, EdgeText, getBezierPath } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
 import { useState } from 'react';
 
@@ -72,19 +72,16 @@ export default function EdgeWithDeleteButton({
           </button>
         </div>
       </foreignObject> */}
-      <text
+      <EdgeText
         x={labelX}
         y={labelY}
-        textAnchor="middle"
-        dominantBaseline="middle"
+        label={edgeLabel || 'No Answer'}
         className="edge-label"
-        onDoubleClick={handleLabelDoubleClick}
-      >
-        {edgeLabel || 'No Answer'}
-      </text>
+        onClick={handleLabelDoubleClick}
+      />
       {isModalOpen && (
         <foreignObject
-          width="200"
+          width="300"
           height="100"
           x={labelX - 100}
           y={labelY - 50}
@@ -105,8 +102,9 @@ export default function EdgeWithDeleteButton({
               Delete
             </button>
           </div>
-        </foreignObject>
-      )}
+        </foreignObject >
+      )
+      }
     </>
   );
 }

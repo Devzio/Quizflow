@@ -237,13 +237,16 @@ body {
 .sidebar.dark .dndnode{
   border: 1px solid #999;
 }
-.edge-modal{
-  position: absolute;
-  z-index: 10;
+.react-flow__edge{
+  position: relative;
 }
 .modal-content{
   position: absolute;
-  z-index: 10;
+  z-index: 100;
+  background-color: #fff;
+  border: 1px solid #999;
+  border-radius: 5px;
+  padding: 0.5rem;
 }
 
 .edge-label{
