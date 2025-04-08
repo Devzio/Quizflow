@@ -1,5 +1,6 @@
 import { Background, BaseEdge, EdgeProps, EdgeText, getBezierPath } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
+import { Check, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function EdgeWithDeleteButton({
@@ -86,7 +87,6 @@ export default function EdgeWithDeleteButton({
           x={labelX - 100}
           y={labelY - 50}
           className="edge-modal"
-          requiredExtensions="http://www.w3.org/1999/xhtml"
         >
           <div className="modal-content">
             <input
@@ -95,11 +95,13 @@ export default function EdgeWithDeleteButton({
               onChange={handleLabelChange}
               placeholder="Edge label"
             />
-            <button onClick={handleModalClose}>Save</button>
+            <button onClick={handleModalClose} >
+              <Check className="no-edge-style" size={16} />
+            </button>
             <button
               onClick={() => onEdgeClick()}
             >
-              Delete
+              <Trash2 className="no-edge-style" size={14} />
             </button>
           </div>
         </foreignObject >
