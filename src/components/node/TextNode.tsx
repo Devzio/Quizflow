@@ -85,7 +85,7 @@ export function TextNode({ data, id, selected }: NodeProps<TextNode>) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (modalRef.current && event.target instanceof HTMLElement && !modalRef.current.contains(event.target)) {
         handleModalClose();
       }
     };

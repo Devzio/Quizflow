@@ -135,7 +135,7 @@ const DnDFlow = () => {
       });
 
       const newNode = {
-        id: nanoid(),
+        id: uuidv4(),
         type,
         position,
         data: { label: type === 'text' ? 'New Text' : '' },
