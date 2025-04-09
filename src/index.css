@@ -112,17 +112,18 @@ body,
 /* Add these new styles */
 .color-mode-toggle {
   display: flex;
-  position: absolute;
-  bottom: 125px;
-  left: 14px;
-  width: 28px;
+  /* position: absolute;
+  bottom: 172px;
+  left: 15px;
+  width: 26px;
   height: 28px;
-  z-index: 5;
+  z-index: 5; */
+  height: 25px;
   padding: 4px;
   border-radius: 3px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08);
+  /* box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08); */
   justify-content: center;
   align-items: center;
 
@@ -236,4 +237,55 @@ body {
 }
 .sidebar.dark .dndnode{
   border: 1px solid #999;
+}
+.react-flow__edge{
+  position: relative;
+}
+.modal-content{
+  position: absolute;
+  z-index: 100;
+  background-color: #fff;
+  border: 1px solid #999;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+.edge-label{
+  font-size: 10px;
+  color: #424242;
+  background-color: #ff0000!important;
+}
+
+/* forces modals to render on top of nodes */
+.react-flow__edges svg{
+  position: absolute;
+  z-index: 15 !important;
+}
+
+/* removes edge styling on svg icons */
+.no-edge-style path {
+  stroke-dasharray: none !important;
+  stroke-dashoffset: 0 !important;
+  animation: none !important;
+}
+.no-edge-style{
+  position: relative!important;
+}
+
+.modal-content{
+  width: 150px;
+  height: 35px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
+}
+
+.modal-content input{
+  width: 100%;
+}
+
+.fill-none{
+  fill: none!important;
+  stroke-width: 12%;
 }

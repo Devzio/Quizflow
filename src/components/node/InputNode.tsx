@@ -1,6 +1,7 @@
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { nanoid } from 'nanoid';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { Check } from 'lucide-react';
 // test push code
 // const handleStyle = { left: 10 };
 
@@ -10,6 +11,9 @@ export function InputNode() {
   // }, []);
 
   const [input, setInput] = useState("")
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [nodeLabel, setNodeLabel] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
   const { setNodes } = useReactFlow();
 
   function addNode() {
@@ -42,8 +46,29 @@ export function InputNode() {
               addNode();
             }
           }}
+          onClick={() => {
+            setIsModalOpen(true);
+            setNodeLabel(input);
+          }}
         />
         <button onClick={addNode}>Add</button>
+
+        {isModalOpen && (
+          <div className="modal-content" ref={modalRef} style={{ position: 'absolute', zIndex: 100 }}>
+            <input
+              type="text"
+              value={nodeLabel}
+              onChange={(e) => setNodeLabel(e.target.value)}
+              placeholder="Node label"
+            />
+            <button onClick={() => {
+              setIsModalOpen(false);
+              setInput(nodeLabel);
+            }}>
+              <Check className="no-edge-style" size={16} />
+            </button>
+          </div>
+        )}
       </div>
       <Handle type="source" position={Position.Bottom} />
       {/* <Handle type="source" position={Position.Bottom} id="b" style={handleStyle} /> */}

@@ -31,7 +31,7 @@ export const initialNodes = [
     data: {
       label: (
         <>
-          Question <strong>2A</strong>
+          Question 2A
         </>
       ),
     },
@@ -48,7 +48,7 @@ export const initialNodes = [
     data: {
       label: (
         <>
-          Question <strong>2B</strong>
+          Question 2B
         </>
       ),
     },
@@ -60,7 +60,7 @@ export const initialNodes = [
     data: {
       label: (
         <>
-          Question <strong>3A</strong>
+          Question 3A
         </>
       ),
     },
@@ -72,7 +72,7 @@ export const initialNodes = [
     data: {
       label: (
         <>
-          Question <strong>3B</strong>
+          Question 3B
         </>
       ),
     },
@@ -84,7 +84,7 @@ export const initialNodes = [
     data: {
       label: (
         <>
-          Question <strong>3C</strong>
+          Question 3C
         </>
       ),
     },
@@ -96,7 +96,7 @@ export const initialNodes = [
     data: {
       label: (
         <>
-          Question <strong>3C</strong>
+          Question 3C
         </>
       ),
     },
