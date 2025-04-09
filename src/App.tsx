@@ -1,4 +1,5 @@
 import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlowProvider, ReactFlow, useReactFlow, useEdgesState, useNodesState, reconnectEdge } from '@xyflow/react';
+import { v4 as uuidv4 } from 'uuid';
 
 import '@xyflow/react/dist/style.css';
 import { useCallback, useRef } from 'react';
@@ -12,7 +13,6 @@ import { useState } from 'react';
 import { Moon, Sun } from "lucide-react"
 import { Sidebar } from './components/Sidebar';
 import { DnDProvider, useDnD } from './components/DnDContext';
-import { nanoid } from "nanoid";
 import { EndNode } from './components/node/EndNode';
 
 
@@ -66,6 +66,7 @@ const DnDFlow = () => {
     (params: Edge | Connection) =>
       setEdges((eds) => addEdge({
         ...params,
+        id: uuidv4(),
         animated: true,
         type: "edgedelete"
       }, eds)),
@@ -91,7 +92,7 @@ const DnDFlow = () => {
       });
 
       const newNode = {
-        id: nanoid(),
+        id: uuidv4(),
         type,
         position,
         data: { label: type === 'text' ? 'New Text' : '' },
