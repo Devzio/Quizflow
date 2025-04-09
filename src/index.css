@@ -273,13 +273,16 @@ body {
 }
 
 .modal-content{
+  width: 150px;
+  height: 35px;
+  border-radius: 3px;
   display: flex;
   flex-direction: row;
   gap: 0.4rem;
 }
 
 .modal-content input{
-  width: 100px;
+  width: 100%;
 }
 
 .fill-none{
