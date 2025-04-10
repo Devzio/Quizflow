@@ -1,26 +1,33 @@
-type JasonNode = {
+type JsonNode = {
   id: string;
   type: string;
-  data: { label: string };
-  position: { x: number; y: number };
+  data: {
+    label: string;
+    fields?: any;
+  };
+  position: {
+    x: number;
+    y: number;
+  };
 };
 
-type JasonEdge = {
+type JsonEdge = {
   id: string;
   source: string;
   target: string;
   type: string;
   animated?: boolean;
-  data: { label: string };
+  data: {
+    label: string;
+  };
 };
 
-type JasonJson = {
-  nodes: JasonNode[];
-  edges: JasonEdge[];
+type JsonJson = {
+  nodes: JsonNode[];
+  edges: JsonEdge[];
 };
 
-export function convertJson(input: any): JasonJson {
-  // ✅ Jason 포맷이면 그대로 사용 (단, label만 보정)
+export function convertJson(input: any): JsonJson {
   if (input.nodes && input.edges) {
     const edges = input.edges.map((e: any) => ({
       ...e,
@@ -35,12 +42,10 @@ export function convertJson(input: any): JasonJson {
   const nodesRaw = input.filter((item: any) => item.model === 'questionnaire.node');
   const edgesRaw = input.filter((item: any) => item.model === 'questionnaire.edge');
   const criteria = input.filter((item: any) => item.model === 'questionnaire.edgetriggercriteria');
-  const graph = input.find((item: any) => item.model === 'questionnaire.questionnairegraph');
-  const startNodeId = graph?.fields?.start;
 
-  const questionMap = new Map<string, string>();
+  const questionMap = new Map<string, any>();
   questions.forEach((q: any) => {
-    questionMap.set(q.pk, q.fields.title);
+    questionMap.set(q.pk, q.fields);
   });
 
   const labelMap = new Map<number, string>();
@@ -48,59 +53,70 @@ export function convertJson(input: any): JasonJson {
     labelMap.set(c.fields.edge, c.fields.choice.replace('Boolean ', ''));
   });
 
-  const visited = new Set<string>();
-  const positionMap = new Map<string, { x: number; y: number }>();
-  const nodes: JasonNode[] = [];
-  const edges: JasonEdge[] = [];
+  const childMap = new Map<string, string[]>();
+  const edgeMap = new Map<string, string>();
+  edgesRaw.forEach((e: any) => {
+    const start = e.fields.start;
+    const end = e.fields.end;
+    if (!childMap.has(start)) childMap.set(start, []);
+    childMap.get(start)?.push(end);
+    edgeMap.set(`${start}->${end}`, labelMap.get(e.pk) || '');
+  });
 
-  const dx = 300;
-  const dy = 180;
+  const positioned = new Set<string>();
+  const nodeMap = new Map<string, JsonNode>();
+  const spacingX = 300;
+  const spacingY = 200;
 
-  function traverse(nodeId: string, x: number, y: number) {
-    if (visited.has(nodeId)) return;
-    visited.add(nodeId);
+  function placeNode(id: string, x: number, y: number) {
+    if (positioned.has(id)) return;
+    const raw = nodesRaw.find((n: any) => n.pk === id);
+    const fields = questionMap.get(raw?.fields?.question);
+    const label = fields?.title || 'No label';
 
-    const nodeRaw = nodesRaw.find((n: any) => n.pk === nodeId);
-    if (!nodeRaw) return;
-
-    const isStart = nodeId === startNodeId;
-    const label = questionMap.get(nodeRaw.fields.question) || 'No label';
-
-    nodes.push({
-      id: nodeId,
-      type: isStart ? 'start' : 'text',
-      data: { label },
+    const node: JsonNode = {
+      id,
+      type: nodeMap.size === 0 ? 'start' : 'text',
       position: { x, y },
-    });
+      data: { label, fields },
+    };
+    nodeMap.set(id, node);
+    positioned.add(id);
 
-    positionMap.set(nodeId, { x, y });
-
-    const outgoingEdges = edgesRaw.filter((e: any) => e.fields.start === nodeId);
-    let branchOffset = -((outgoingEdges.length - 1) / 2) * dx;
-
-    outgoingEdges.forEach((e: any) => {
-      const target = e.fields.end;
-      const label = labelMap.get(e.pk) ?? '';
-      const nextX = x + branchOffset;
-      const nextY = y + dy;
-
-      edges.push({
-        id: String(e.pk),
-        source: nodeId,
-        target,
-        type: 'straightEdge',
-        animated: true,
-        data: { label },
+    const children = childMap.get(id) || [];
+    if (children.length === 1) {
+      placeNode(children[0], x, y + spacingY);
+    } else if (children.length === 2) {
+      const left = edgeMap.get(`${id}->${children[0]}`) === 'No' ? children[0] : children[1];
+      const right = edgeMap.get(`${id}->${children[0]}`) === 'Yes' ? children[0] : children[1];
+      placeNode(left, x - spacingX, y + spacingY);
+      placeNode(right, x + spacingX, y + spacingY);
+    } else {
+      children.forEach((childId, i) => {
+        placeNode(childId, x + i * spacingX, y + spacingY);
       });
-
-      branchOffset += dx;
-      traverse(target, nextX, nextY);
-    });
+    }
   }
 
-  if (startNodeId) {
-    traverse(startNodeId, 0, 0);
-  }
+  const startNode = nodesRaw.find((n: any) => {
+    const question = questionMap.get(n.fields.question);
+    return question?.title?.toLowerCase()?.includes('start') ||
+           question?.title?.toLowerCase()?.includes('welcome');
+  }) || nodesRaw[0];
 
-  return { nodes, edges };
+  placeNode(startNode.pk, 0, 0);
+
+  const edges: JsonEdge[] = edgesRaw.map((e: any) => ({
+    id: e.pk.toString(),
+    source: e.fields.start,
+    target: e.fields.end,
+    type: 'straightEdge',
+    animated: true,
+    data: { label: labelMap.get(e.pk) ?? '' },
+  }));
+
+  return {
+    nodes: Array.from(nodeMap.values()),
+    edges,
+  };
 }

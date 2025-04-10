@@ -1,16 +1,16 @@
 // src/types/index.ts
 
-export type JasonNode = {
+export type JsonNode = {
     id: string;
     type: string;
     data: { label: string };
     position: { x: number; y: number };
   };
   
-  export type JasonEdge = {
+  export type JsonEdge = {
     id: string;
     source: string;
     target: string;
     type: string;
-    data?: { label?: string }; // label을 위한 필드
+    data?: { label?: string }; // 
   };
