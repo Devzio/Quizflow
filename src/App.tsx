@@ -1,4 +1,5 @@
 import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlowProvider, ReactFlow, useReactFlow, useEdgesState, useNodesState, reconnectEdge } from '@xyflow/react';
+import ImportFlow from './components/ImportFlow';
 import { v4 as uuidv4 } from 'uuid';
 
 import '@xyflow/react/dist/style.css';
@@ -105,6 +106,7 @@ const DnDFlow = () => {
 
   return (
     <div className="dndflow">
+      <ImportFlow setNodes={setNodes} setEdges={setEdges} />
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
           colorMode={colorMode}
