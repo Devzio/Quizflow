@@ -201,7 +201,12 @@ body {
   flex-grow: 1;
   height: 100%;
 }
- 
+
+.reactflow-layout{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
 .dndflow .selectall {
   margin-top: 10px;
 }

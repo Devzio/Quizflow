@@ -1,9 +1,10 @@
 import React from 'react';
 import { convertJson } from '../utils/convertJson'; // 변환 함수
+import { Node, Edge } from '@xyflow/react';
 
 interface ImportFlowProps {
-  setNodes: (nodes: any[]) => void;
-  setEdges: (edges: any[]) => void;
+  setNodes: React.Dispatch<React.SetStateAction<Node[]>> | ((nodes: Node[]) => void);
+  setEdges: React.Dispatch<React.SetStateAction<Edge[]>> | ((edges: Edge[]) => void);
 }
 
 const ImportFlow: React.FC<ImportFlowProps> = ({ setNodes, setEdges }) => {

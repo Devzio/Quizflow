@@ -1,4 +1,5 @@
 import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlow, useReactFlow, useEdgesState, useNodesState, reconnectEdge, Node, NodeChange, EdgeChange, XYPosition, NodeTypes, EdgeTypes, applyNodeChanges, applyEdgeChanges } from '@xyflow/react';
+import ImportFlow from './ImportFlow';
 import { v4 as uuidv4 } from 'uuid';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -54,8 +55,8 @@ const DnDFlow = () => {
     return () => document.removeEventListener('contextmenu', handleContextMenu);
   }, []);
 
-  const [nodes, setNodes] = useNodesState(initialNodes);
-  const [edges, setEdges] = useEdgesState(initialEdges);
+  const [nodes, setNodes] = useNodesState<Node>(initialNodes);
+  const [edges, setEdges] = useEdgesState<Edge>(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
 
@@ -245,50 +246,53 @@ const DnDFlow = () => {
 
   return (
     <div className="dndflow">
-      <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-        <ReactFlow
-          colorMode={colorMode}
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChangeWithHistory}
-          onEdgesChange={onEdgesChangeWithHistory}
-          onConnect={onConnectWithHistory}
-          onReconnect={onReconnect}
-          onNodesDelete={onNodesDeleteWithHistory}
-          onDrop={onDropWithHistory}
-          onDragOver={onDragOver}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-          style={{ backgroundColor: "#F7F9FB" }}
-        >
-          <Background gap={12} size={1} />
-          <MiniMap zoomable pannable />
-          <Controls>
-            <button
-              onClick={undo}
-              disabled={history.length === 0}
-              className="react-flow__controls-button"
-              title="Undo"
-            >
-              <Undo className="fill-none" size={14} />
-            </button>
-            <button
-              onClick={redo}
-              disabled={future.length === 0}
-              className="react-flow__controls-button"
-              title="Redo"
-            >
-              <Redo className="fill-none" size={14} />
-            </button>
-            <button
-              onClick={toggleColorMode}
-              className={`color-mode-toggle ${colorMode}`}
-            >
-              {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
-            </button>
-          </Controls>
-        </ReactFlow>
+      <div className='reactflow-layout'>
+        <ImportFlow setNodes={setNodes} setEdges={setEdges} />
+        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+          <ReactFlow
+            colorMode={colorMode}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChangeWithHistory}
+            onEdgesChange={onEdgesChangeWithHistory}
+            onConnect={onConnectWithHistory}
+            onReconnect={onReconnect}
+            onNodesDelete={onNodesDeleteWithHistory}
+            onDrop={onDropWithHistory}
+            onDragOver={onDragOver}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            fitView
+            style={{ backgroundColor: "#F7F9FB" }}
+          >
+            <Background gap={12} size={1} />
+            <MiniMap zoomable pannable />
+            <Controls>
+              <button
+                onClick={undo}
+                disabled={history.length === 0}
+                className="react-flow__controls-button"
+                title="Undo"
+              >
+                <Undo className="fill-none" size={14} />
+              </button>
+              <button
+                onClick={redo}
+                disabled={future.length === 0}
+                className="react-flow__controls-button"
+                title="Redo"
+              >
+                <Redo className="fill-none" size={14} />
+              </button>
+              <button
+                onClick={toggleColorMode}
+                className={`color-mode-toggle ${colorMode}`}
+              >
+                {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
+              </button>
+            </Controls>
+          </ReactFlow>
+        </div>
       </div>
       <Sidebar colorMode={colorMode} />
     </div>
