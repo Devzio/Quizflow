@@ -1,4 +1,5 @@
 import React from 'react';
+import { convertJson } from '../utils/convertJson'; // 변환 함수
 
 interface ImportFlowProps {
   setNodes: (nodes: any[]) => void;
@@ -13,18 +14,19 @@ const ImportFlow: React.FC<ImportFlowProps> = ({ setNodes, setEdges }) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const data = JSON.parse(event.target?.result as string);
-        if (!data.nodes || !data.edges) {
-          alert("Invalid JSON structure. 'nodes' and 'edges' are required.");
-          return;
-        }
-        setNodes(data.nodes);
-        setEdges(data.edges);
+        const raw = JSON.parse(event.target?.result as string);
+        const converted = convertJson(raw); // ⚡️ 클라이언트 JSON → JasonJson 변환
+        console.log('✅ 노드:', converted.nodes);
+        console.log('✅ 엣지 (Yes/No 포함):', converted.edges);
+
+        setNodes(converted.nodes);
+        setEdges(converted.edges);
       } catch (err) {
-        alert("Failed to read JSON file.");
+        alert("❌ JSON parsing error.");
         console.error(err);
       }
     };
+
     reader.readAsText(file);
   };
 
