@@ -170,7 +170,7 @@ const DnDFlow = () => {
         id: uuidv4(),
         type,
         position,
-        data: { label: type === 'text' ? 'New Text' : <div></div> },
+        data: { label: type === 'text' ? 'New Text' : "" },
       };
 
       setNodes(prevNodes => {
@@ -178,7 +178,7 @@ const DnDFlow = () => {
         const typedNewNode = {
           ...newNode,
           data: {
-            label: type === 'text' ? 'New Text' : React.createElement('div')
+            label: type === 'text' ? 'New Text' : ""
           }
         } as typeof prevNodes[0];
 
