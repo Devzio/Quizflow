@@ -57,7 +57,7 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
 
 /**
  * A funciton for a node conversion.
- * It composes a new ModelNode object if there is nothing to be passed down from import.
+ * 'fields' is composed if there is nothing to be passed down from import.
  *
  * @param parent - a ModelQuestionnaireGraph object
  * @param node - a Node object
@@ -98,7 +98,7 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
 
 /**
  * A funciton for a question conversion.
- * It composes a new ModelQuestion object if there is nothing to be passed down from import.
+ * It composes a new question if there is nothing to be passed down from import.
  *
  * @param node - a Node object
  * @returns a ModelQuestion object  
