@@ -14,6 +14,8 @@ import { Sidebar } from './Sidebar';
 import { useDnD } from './DnDContext';
 import { EndNode } from './node/EndNode';
 import React, { ReactNode } from 'react';
+import { ConvertExport } from '../json/export'
+
 
 // Define custom node and edge types
 const nodeTypes: NodeTypes = {
@@ -244,6 +246,18 @@ const DnDFlow = () => {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
+  const saveToJsonFile = () => {
+    const exportdata = ConvertExport("{questionnaire_name}", nodes, edges);
+    const data = JSON.stringify( JSON.parse(exportdata) , null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "flow.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
   return (
     <div className="dndflow">
       <div className='reactflow-layout'>
