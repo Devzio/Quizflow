@@ -4,7 +4,7 @@ type JsonNode = {
   data: {
     label: string;
     fields?: any;
-    question?: any; // ← 이 줄 추가!
+    question?: any;
   };
   position: {
     x: number;
@@ -84,7 +84,7 @@ export function convertJson(input: any): JsonJson {
       data: {
         label,
         fields,
-        question: questionObject || null  
+        question: questionObject || null
       },
     };
     nodeMap.set(id, node);
@@ -112,6 +112,15 @@ export function convertJson(input: any): JsonJson {
   }) || nodesRaw[0];
 
   placeNode(startNode.pk, 0, 0);
+
+  // ✅ 추가된 부분: 배치되지 않은 노드도 전부 배치
+  nodesRaw.forEach((n: any, index: any) => {
+    if (!positioned.has(n.pk)) {
+      const offsetX = (index % 5) * 300;
+      const offsetY = Math.floor(index / 5) * 200 + 600; // 기존 위치보다 아래로 떨어뜨림
+      placeNode(n.pk, offsetX, offsetY);
+    }
+  });
 
   const edges: JsonEdge[] = edgesRaw.map((e: any) => ({
     id: e.pk.toString(),
