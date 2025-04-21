@@ -44,13 +44,14 @@ export type ModelQuestionFields = {
 export type ModelEdge = {
   model: string ;
   pk: number | string; // need further confirmation.
-  fields: ModelEdgeFields;
+  fields?: ModelEdgeFields;
   
 }
 
 export type ModelEdgeFields = {
-  start: string;
-  end: string;
+  start?: string;
+  end?: string;
+  [key: string]: any;
 }
 
 

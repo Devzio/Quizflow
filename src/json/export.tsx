@@ -44,8 +44,8 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
   const edgeList:(ModelEdge | ModelEdgeTriggerCriteria)[] = [];
   edges.forEach((e: Edge) => {
     const ret = convertEdge(e)
-    if (ret.edgeTC) { 
-      edgeList.push(ret.edgeTC);
+    if (ret._edgeTC) { 
+      edgeList.push(ret._edgeTC);
     }
     
     edgeList.push(ret._edge);
@@ -57,7 +57,6 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
 
 /**
  * A funciton for a node conversion.
- * 'fields' is composed if there is nothing to be passed down from import.
  *
  * @param parent - a ModelQuestionnaireGraph object
  * @param node - a Node object
@@ -70,20 +69,18 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
   // convert node
   const _node:ModelNode = {
     model: Model.Node,
-    pk: node.id 
+    pk: node.id ,
+    fields: {
+      question: _question.pk,
+      parent_graph: parent.pk
+    } as ModelNodeFields
   }
   const {data} = node
   const fields = (data as { fields: ModelNodeFields })?.fields;
   if (fields) {
-    // pass down
-    _node.fields = {...fields}
-  } else {
-    // create a new one
-    _node.fields = {
-      question: _question.pk,
-      parent_graph: parent.pk
-    }
-  }
+    // pass down the rest of the 'fields'
+    _node.fields = {...fields, ..._node.fields}
+  } 
 
   // assign start&end nodes
   if (node.type == 'start') {
@@ -98,7 +95,6 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
 
 /**
  * A funciton for a question conversion.
- * It composes a new question if there is nothing to be passed down from import.
  *
  * @param node - a Node object
  * @returns a ModelQuestion object  
@@ -112,6 +108,7 @@ function convertQuestion(node:Node) {
     // pass down
     _question = {...question};
     _question.fields.title = data?.label || _question.fields.title;
+    console.log(data?.label  || "!")
   } else {
     // create a new one
     _question = {
@@ -143,21 +140,27 @@ function convertQuestion(node:Node) {
  * @returns a ModelEdge object and optionally a ModelEdgeTriggerCriteria object 
  */
 function convertEdge(edge: Edge) {
-  const _edge:ModelEdge  = {
+
+  const _edge:ModelEdge = {
     model: Model.Edge,
     pk: edge.id,
     fields: {
       start: edge.source,
-      end: edge.target,
+      end: edge.target
     } as ModelEdgeFields
-  };
+  }
 
-  let edgeTC = null;
-  if (edge.label) {
-    edgeTC = convertEdgeTriggerCriteria(edge);
+  if (edge.data?.fields) {
+    // pass down the rest of the 'fields'
+    _edge.fields = { ...edge.data?.fields, ..._edge.fields } 
+  } 
+
+  let _edgeTC = null;
+  if (edge.data?.label) {
+    _edgeTC = convertEdgeTriggerCriteria(edge);
   }
   
-  return {_edge, edgeTC: edgeTC ?? null};
+  return {_edge, _edgeTC: _edgeTC ?? null};
 };
 
 
@@ -168,19 +171,24 @@ function convertEdge(edge: Edge) {
  * @returns a ModelEdgeTriggerCriteria object 
  */
 const convertEdgeTriggerCriteria = (edge: Edge, ) => {
-  const edgeTC: ModelEdgeTriggerCriteria = {
-    model: Model.EdgetriggerCriteria,
-    pk: edge.id,
-    fields: {
-      edge: edge.id,
-      ...(edge.label && {choice: edge.label.toString()}),
-    } as ModelEdgeTriggerCriteriaFields
-  } 
 
-  if (edge.data?.fields) {
-    const orgFields = edge.data.fields 
-    edgeTC.fields = { ...edgeTC.fields, ...orgFields}; // pass down 
+  const edgetriggercriteria =  edge.data?.edgetriggercriteria as ModelEdgeTriggerCriteria
+
+  let _edgeTC: ModelEdgeTriggerCriteria;
+  if (edgetriggercriteria) {
+    // pass down
+    _edgeTC = { ...edgetriggercriteria }
+  } else {
+    _edgeTC = {
+      model: Model.EdgetriggerCriteria,
+      pk: uuidv4(),
+      fields: {
+        edge: edge.id,
+      } as ModelEdgeTriggerCriteriaFields
+    }
   }
 
-  return edgeTC
+  _edgeTC.fields.choice = edge.data?.label ? edge.data?.label.toString() : "";
+
+  return _edgeTC
 }

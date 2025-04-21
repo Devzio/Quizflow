@@ -72,8 +72,8 @@ export function convertJson(input: any): JsonJson {
   function placeNode(id: string, x: number, y: number) {
     if (positioned.has(id)) return;
     const raw = nodesRaw.find((n: any) => n.pk === id);
-    const fields = questionMap.get(raw?.fields?.question);
-    const label = fields?.title || 'No label';
+    const fields = raw.fields;
+    const label =  questionMap.get(raw?.fields?.question)?.title || 'No label';
 
     const questionObject = questions.find((q: any) => q.pk === raw?.fields?.question);
 
@@ -128,7 +128,11 @@ export function convertJson(input: any): JsonJson {
     target: e.fields.end,
     type: 'straightEdge',
     animated: true,
-    data: { label: labelMap.get(e.pk) ?? '' },
+    data: { 
+      label: labelMap.get(e.pk) ?? '',
+      fields: {... e.fields},
+      edgetriggercriteria: { ... criteria.find((c: any) => c.fields.edge === e.pk)}
+    },
   }));
 
   return {
