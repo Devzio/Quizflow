@@ -4,6 +4,7 @@ type JsonNode = {
   data: {
     label: string;
     fields?: any;
+    question?: any; // ← 이 줄 추가!
   };
   position: {
     x: number;
@@ -74,11 +75,17 @@ export function convertJson(input: any): JsonJson {
     const fields = questionMap.get(raw?.fields?.question);
     const label = fields?.title || 'No label';
 
+    const questionObject = questions.find((q: any) => q.pk === raw?.fields?.question);
+
     const node: JsonNode = {
       id,
       type: nodeMap.size === 0 ? 'start' : 'text',
       position: { x, y },
-      data: { label, fields },
+      data: {
+        label,
+        fields,
+        question: questionObject || null  
+      },
     };
     nodeMap.set(id, node);
     positioned.add(id);
