@@ -143,7 +143,7 @@ function convertEdge(edge: Edge) {
 
   const _edge:ModelEdge = {
     model: Model.Edge,
-    pk: edge.id,
+    pk: Number.isNaN(+edge.id) ? edge.id : +edge.id,
     fields: {
       start: edge.source,
       end: edge.target
