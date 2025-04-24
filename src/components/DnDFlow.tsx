@@ -15,6 +15,7 @@ import { useDnD } from './DnDContext';
 import { EndNode } from './node/EndNode';
 import React, { ReactNode } from 'react';
 import { ConvertExport } from '../utils/export'
+import { GenerateRandomPk } from '../utils/utils';
 
 
 // Define custom node and edge types
@@ -116,6 +117,7 @@ const DnDFlow = () => {
         const newEdges = addEdge(
           {
             ...params,
+            id: GenerateRandomPk().toString(),
             animated: true,
             type: "edgedelete",
           },

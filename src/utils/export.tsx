@@ -3,6 +3,7 @@ import { Node, Edge } from '@xyflow/react';
 import { ModelQuestionnaireGraph, ModelQuestionnaireGraphFields, 
   ModelNode, ModelNodeFields, ModelQuestion, ModelQuestionFields,
   ModelEdge, ModelEdgeFields, ModelEdgeTriggerCriteria, ModelEdgeTriggerCriteriaFields} from './modelTypes'
+import {GenerateRandomPk} from '../utils/utils';
 
 
 enum Model {
@@ -181,7 +182,7 @@ const convertEdgeTriggerCriteria = (edge: Edge, ) => {
   } else {
     _edgeTC = {
       model: Model.EdgetriggerCriteria,
-      pk: 290000 + Math.floor(1000 + Math.random() * 9000),
+      pk: GenerateRandomPk(),
       fields: {
         edge: edge.id,
       } as ModelEdgeTriggerCriteriaFields
