@@ -181,7 +181,7 @@ const convertEdgeTriggerCriteria = (edge: Edge, ) => {
   } else {
     _edgeTC = {
       model: Model.EdgetriggerCriteria,
-      pk: 29000 + Math.floor(1000 + Math.random() * 9000),
+      pk: 290000 + Math.floor(1000 + Math.random() * 9000),
       fields: {
         edge: edge.id,
       } as ModelEdgeTriggerCriteriaFields
