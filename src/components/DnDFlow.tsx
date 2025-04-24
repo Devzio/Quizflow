@@ -263,9 +263,6 @@ const DnDFlow = () => {
       <div className='reactflow-layout'>
         <ImportFlow setNodes={setNodes} setEdges={setEdges} />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-        <button onClick={saveToJsonFile} style={{ position: "absolute", zIndex: 10, top: 10, left: 10 }}>
-          Save JSON
-        </button>
           <ReactFlow
             colorMode={colorMode}
             nodes={nodes}
