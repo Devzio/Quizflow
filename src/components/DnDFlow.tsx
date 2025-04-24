@@ -14,7 +14,7 @@ import { Sidebar } from './Sidebar';
 import { useDnD } from './DnDContext';
 import { EndNode } from './node/EndNode';
 import React, { ReactNode } from 'react';
-import { ConvertExport } from '../json/export'
+import { ConvertExport } from '../utils/export'
 
 
 // Define custom node and edge types
@@ -263,6 +263,9 @@ const DnDFlow = () => {
       <div className='reactflow-layout'>
         <ImportFlow setNodes={setNodes} setEdges={setEdges} />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+        <button onClick={saveToJsonFile} style={{ position: "absolute", zIndex: 10, top: 10, left: 10 }}>
+          Save JSON
+        </button>
           <ReactFlow
             colorMode={colorMode}
             nodes={nodes}

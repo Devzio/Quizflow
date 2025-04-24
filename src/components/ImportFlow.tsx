@@ -1,5 +1,5 @@
 import React from 'react';
-import { convertJson } from '../utils/convertJson'; // 변환 함수
+import { convertJson } from '../utils/import'; // 변환 함수
 import { Node, Edge } from '@xyflow/react';
 
 interface ImportFlowProps {

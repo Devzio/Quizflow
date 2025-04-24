@@ -43,7 +43,7 @@ export type ModelQuestionFields = {
 
 export type ModelEdge = {
   model: string ;
-  pk: number | string; // need further confirmation.
+  pk: number | string; 
   fields?: ModelEdgeFields;
   
 }
@@ -57,12 +57,12 @@ export type ModelEdgeFields = {
 
 export type ModelEdgeTriggerCriteria = {
   model: string,
-  pk: number | string; // need further confirmation.
+  pk: number | string; 
   fields: ModelEdgeTriggerCriteriaFields;
 }
 
 export type ModelEdgeTriggerCriteriaFields = {
-  edge: number | string; // need further confirmation.
+  edge: number | string; 
   choice?: string;
   [key: string]: any;
 }

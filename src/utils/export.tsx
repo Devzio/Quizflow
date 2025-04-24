@@ -108,7 +108,6 @@ function convertQuestion(node:Node) {
     // pass down
     _question = {...question};
     _question.fields.title = data?.label || _question.fields.title;
-    console.log(data?.label  || "!")
   } else {
     // create a new one
     _question = {
@@ -156,10 +155,11 @@ function convertEdge(edge: Edge) {
   } 
 
   let _edgeTC = null;
+  
   if (edge.data?.label) {
     _edgeTC = convertEdgeTriggerCriteria(edge);
   }
-  
+  console.log(edge.data)
   return {_edge, _edgeTC: _edgeTC ?? null};
 };
 
@@ -181,7 +181,7 @@ const convertEdgeTriggerCriteria = (edge: Edge, ) => {
   } else {
     _edgeTC = {
       model: Model.EdgetriggerCriteria,
-      pk: uuidv4(),
+      pk: 29000 + Math.floor(1000 + Math.random() * 9000),
       fields: {
         edge: edge.id,
       } as ModelEdgeTriggerCriteriaFields
