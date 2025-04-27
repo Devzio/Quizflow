@@ -20,10 +20,15 @@ type JsonEdge = {
   animated?: boolean;
   data: {
     label: string;
+    fields?: any;
+    edgetriggercriteria?: any;
   };
 };
 
 type JsonJson = {
+  model: string;
+  pk: string;
+  fields: any;
   nodes: JsonNode[];
   edges: JsonEdge[];
 };
@@ -36,8 +41,16 @@ export function convertJson(input: any): JsonJson {
       animated: e.animated ?? true,
       data: { label: e.data?.label ?? e.label ?? '' },
     }));
-    return { nodes: input.nodes, edges };
+    return {
+      model: 'questionnairegraph',
+      pk: '',
+      fields: {},
+      nodes: input.nodes,
+      edges,
+    };
   }
+
+  const graphInfo = input.find((item: any) => item.model === 'questionnaire.questionnairegraph');
 
   const questions = input.filter((item: any) => item.model === 'questionnaire.question');
   const nodesRaw = input.filter((item: any) => item.model === 'questionnaire.node');
@@ -73,20 +86,25 @@ export function convertJson(input: any): JsonJson {
     if (positioned.has(id)) return;
     const raw = nodesRaw.find((n: any) => n.pk === id);
     const fields = raw.fields;
-    const label =  questionMap.get(raw?.fields?.question)?.title || 'No label';
-
+    const label = questionMap.get(raw?.fields?.question)?.title || 'No label';
     const questionObject = questions.find((q: any) => q.pk === raw?.fields?.question);
+    const isDeadEnd = questionObject?.fields?.type === 'dead_end';
 
     const node: JsonNode = {
       id,
-      type: nodeMap.size === 0 ? 'start' : 'text',
+      type: isDeadEnd ? 'end' : nodeMap.size === 0 ? 'start' : 'text',
       position: { x, y },
       data: {
         label,
         fields,
-        question: questionObject || null
+        question: questionObject || null,
       },
     };
+
+    if (isDeadEnd) {
+      console.log('✅ end_node:', node);
+    }
+
     nodeMap.set(id, node);
     positioned.add(id);
 
@@ -113,11 +131,10 @@ export function convertJson(input: any): JsonJson {
 
   placeNode(startNode.pk, 0, 0);
 
-  // ✅ 추가된 부분: 배치되지 않은 노드도 전부 배치
   nodesRaw.forEach((n: any, index: any) => {
     if (!positioned.has(n.pk)) {
-      const offsetX = (index % 5) * 300;
-      const offsetY = Math.floor(index / 5) * 200 + 600; // 기존 위치보다 아래로 떨어뜨림
+      const offsetX = (index % 5) * spacingX;
+      const offsetY = Math.floor(index / 5) * spacingY + 600;
       placeNode(n.pk, offsetX, offsetY);
     }
   });
@@ -128,14 +145,17 @@ export function convertJson(input: any): JsonJson {
     target: e.fields.end,
     type: 'straightEdge',
     animated: true,
-    data: { 
+    data: {
       label: labelMap.get(e.pk) ?? '',
-      fields: {... e.fields},
-      edgetriggercriteria: { ... criteria.find((c: any) => c.fields.edge === e.pk)}
+      fields: { ...e.fields },
+      edgetriggercriteria: criteria.find((c: any) => c.fields.edge === e.pk) || null,
     },
   }));
 
   return {
+    model: 'questionnairegraph',
+    pk: graphInfo?.pk,
+    fields: graphInfo?.fields || {},
     nodes: Array.from(nodeMap.values()),
     edges,
   };

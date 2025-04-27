@@ -1,5 +1,5 @@
 import React from 'react';
-import { convertJson } from '../utils/import'; // 변환 함수
+import { convertJson } from '../utils/import'; // 
 import { Node, Edge } from '@xyflow/react';
 
 interface ImportFlowProps {
@@ -16,9 +16,14 @@ const ImportFlow: React.FC<ImportFlowProps> = ({ setNodes, setEdges }) => {
     reader.onload = (event) => {
       try {
         const raw = JSON.parse(event.target?.result as string);
-        const converted = convertJson(raw); // ⚡️ 클라이언트 JSON → JasonJson 변환
-        console.log('✅ 노드:', converted.nodes);
-        console.log('✅ 엣지 (Yes/No 포함):', converted.edges);
+        const converted = convertJson(raw); 
+        console.log('✅ node:', converted.nodes);
+        console.log('✅ edge:', converted.edges);
+        console.log('✅ graph:', {
+          model: converted.model,
+          pk: converted.pk,
+          ...converted.fields
+        });
 
         setNodes(converted.nodes);
         setEdges(converted.edges);
