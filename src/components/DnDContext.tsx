@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from 'react';
-import ImportFlow from '../components/ImportFlow';
 
 type DnDContextType = {
   type: string | null;

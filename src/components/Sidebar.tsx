@@ -51,12 +51,12 @@ export function Sidebar({ colorMode }: { colorMode: string }) {
       >
         {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
       </button> */}
-      <h3 style={{ marginTop: "50px" }}>Interaction Instructions</h3>
-      <ul style={{ marginLeft: "20px" }}>
+      {/* <h3 style={{ marginTop: "50px" }}>Interaction Instructions</h3> */}
+      {/* <ul style={{ marginLeft: "20px" }}>
         <li>Right click Nodes to Edit or Delete</li>
         <li>Left Click on edges to edit or delete (might change to right click)</li>
         <li>Havent made up my mind yet on which is better... right click or left =(</li>
-      </ul>
+      </ul> */}
     </div>
   );
 }

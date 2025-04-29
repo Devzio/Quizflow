@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Node, Edge } from '@xyflow/react';
-import { ModelQuestionnaireGraph, ModelQuestionnaireGraphFields, 
+import {
+  ModelQuestionnaireGraph, ModelQuestionnaireGraphFields,
   ModelNode, ModelNodeFields, ModelQuestion, ModelQuestionFields,
-  ModelEdge, ModelEdgeFields, ModelEdgeTriggerCriteria, ModelEdgeTriggerCriteriaFields} from './modelTypes'
-import {GenerateRandomPk} from '../utils/utils';
+  ModelEdge, ModelEdgeFields, ModelEdgeTriggerCriteria, ModelEdgeTriggerCriteriaFields
+} from './modelTypes'
+import { GenerateRandomPk } from '../utils/utils';
 
 
 enum Model {
@@ -24,35 +26,35 @@ enum Model {
  * @returns a Json string
  */
 export function ConvertExport(questionnareName: string, nodes: Node[], edges: Edge[]): string {
-  
-  const parentGraph:ModelQuestionnaireGraph = { 
+
+  const parentGraph: ModelQuestionnaireGraph = {
     model: Model.QuestionnaireGraph,
     pk: uuidv4(),
     fields: {
-      name: questionnareName || `quizflow_questionnaire`, 
+      name: questionnareName,
       start: "",
       end: "",
-      status: "active" 
+      status: "active"
     } as ModelQuestionnaireGraphFields
   }
 
-  const nodeList:(ModelNode | ModelQuestion)[] = [];
+  const nodeList: (ModelNode | ModelQuestion)[] = [];
   nodes.forEach((n: Node) => {
     const ret = convertNode(parentGraph, n);
     nodeList.push(ret._node, ret._question)
   });
-  
-  const edgeList:(ModelEdge | ModelEdgeTriggerCriteria)[] = [];
+
+  const edgeList: (ModelEdge | ModelEdgeTriggerCriteria)[] = [];
   edges.forEach((e: Edge) => {
     const ret = convertEdge(e)
-    if (ret._edgeTC) { 
+    if (ret._edgeTC) {
       edgeList.push(ret._edgeTC);
     }
-    
+
     edgeList.push(ret._edge);
   });
 
-  const data = JSON.stringify([ parentGraph, ...nodeList, ...edgeList ], null, 2);
+  const data = JSON.stringify([parentGraph, ...nodeList, ...edgeList], null, 2);
   return data
 }
 
@@ -64,24 +66,24 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
  * @returns a ModelNode object and a ModelQuestion object  
  */
 function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
-  
+
   const _question = convertQuestion(node)
-  
+
   // convert node
-  const _node:ModelNode = {
+  const _node: ModelNode = {
     model: Model.Node,
-    pk: node.id ,
+    pk: node.id,
     fields: {
       question: _question.pk,
       parent_graph: parent.pk
     } as ModelNodeFields
   }
-  const {data} = node
+  const { data } = node
   const fields = (data as { fields: ModelNodeFields })?.fields;
   if (fields) {
     // pass down the rest of the 'fields'
-    _node.fields = {...fields, ..._node.fields}
-  } 
+    _node.fields = { ...fields, ..._node.fields }
+  }
 
   // assign start&end nodes
   if (node.type == 'start') {
@@ -89,8 +91,8 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
   } else if (node.type == 'end') {
     parent.fields.end = node.id;
   }
-    
-  return { _node, _question}
+
+  return { _node, _question }
 };
 
 
@@ -100,32 +102,32 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
  * @param node - a Node object
  * @returns a ModelQuestion object  
  */
-function convertQuestion(node:Node) {
+function convertQuestion(node: Node) {
   const { data } = node;
   const question = (data as { question: ModelQuestion })?.question;
 
-  let _question:ModelQuestion;
-  if ( question) { 
+  let _question: ModelQuestion;
+  if (question) {
     // pass down
-    _question = {...question};
+    _question = { ...question };
     _question.fields.title = data?.label || _question.fields.title;
   } else {
     // create a new one
     _question = {
       model: Model.Question,
-      pk: uuidv4(), 
+      pk: uuidv4(),
       fields: {
         title: data?.label || "",
         required: true,
         type: "boolean",
-        auto_next: true, 
+        auto_next: true,
       } as ModelQuestionFields
     }
   }
 
   // update end node
-  if (node.type == "end") { 
-    _question.fields.auto_next = false 
+  if (node.type == "end") {
+    _question.fields.auto_next = false
     _question.fields.type = "dead_end"
   }
 
@@ -141,7 +143,7 @@ function convertQuestion(node:Node) {
  */
 function convertEdge(edge: Edge) {
 
-  const _edge:ModelEdge = {
+  const _edge: ModelEdge = {
     model: Model.Edge,
     pk: Number.isNaN(+edge.id) ? edge.id : +edge.id,
     fields: {
@@ -152,16 +154,16 @@ function convertEdge(edge: Edge) {
 
   if (edge.data?.fields) {
     // pass down the rest of the 'fields'
-    _edge.fields = { ...edge.data?.fields, ..._edge.fields } 
-  } 
+    _edge.fields = { ...edge.data?.fields, ..._edge.fields }
+  }
 
   let _edgeTC = null;
-  
+
   if (edge.data?.label) {
     _edgeTC = convertEdgeTriggerCriteria(edge);
   }
   console.log(edge.data)
-  return {_edge, _edgeTC: _edgeTC ?? null};
+  return { _edge, _edgeTC: _edgeTC ?? null };
 };
 
 
@@ -171,9 +173,9 @@ function convertEdge(edge: Edge) {
  * @param nodes - a Edge object
  * @returns a ModelEdgeTriggerCriteria object 
  */
-const convertEdgeTriggerCriteria = (edge: Edge, ) => {
+const convertEdgeTriggerCriteria = (edge: Edge,) => {
 
-  const edgetriggercriteria =  edge.data?.edgetriggercriteria as ModelEdgeTriggerCriteria
+  const edgetriggercriteria = edge.data?.edgetriggercriteria as ModelEdgeTriggerCriteria
 
   let _edgeTC: ModelEdgeTriggerCriteria;
   if (edgetriggercriteria) {
