@@ -1,17 +1,23 @@
 import React, { useRef, useState } from 'react';
-import { convertJson } from '../utils/import'; // 
+import { convertJson } from '../utils/import';
 import { Node, Edge } from '@xyflow/react';
+import { toast } from 'react-toastify';
 
 interface ToolBarProps {
   setNodes: React.Dispatch<React.SetStateAction<Node[]>> | ((nodes: Node[]) => void);
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>> | ((edges: Edge[]) => void);
-  saveToJsonFile?: (name: string) => void; // Modified to accept questionnaire name
-  questionnaireName?: string;
+  saveToJsonFile?: (name: string) => void;
+  colorMode?: 'light' | 'dark';
 }
 
-const ToolBar: React.FC<ToolBarProps> = ({ setNodes, setEdges, saveToJsonFile, questionnaireName: initialName }) => {
+const ToolBar: React.FC<ToolBarProps> = ({
+  setNodes,
+  setEdges,
+  saveToJsonFile,
+  colorMode = 'light'
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [questionnaireName, setQuestionnaireName] = useState<string>(initialName || "Flow Name");
+  const [questionnaireName, setQuestionnaireName] = useState<string>("");
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,13 +46,21 @@ const ToolBar: React.FC<ToolBarProps> = ({ setNodes, setEdges, saveToJsonFile, q
 
         setNodes(converted.nodes);
         setEdges(converted.edges);
+        toast.success(`Flow ${questionnaireName}.json successfully opened`);
       } catch (err) {
-        alert("❌ JSON parsing error. ❌");
+        // Reset the questionnaire name input when there's an error
+        setQuestionnaireName("");
+        toast.error("Error opening flow");
         console.error(err);
       }
     };
 
     reader.readAsText(file);
+
+    // Reset the file input so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const triggerFileInput = () => {
@@ -55,7 +69,7 @@ const ToolBar: React.FC<ToolBarProps> = ({ setNodes, setEdges, saveToJsonFile, q
 
   const buttonStyle = {
     padding: '0.5rem 1rem',
-    color: 'white',
+    color: colorMode === 'dark' ? '#f0f0f0' : 'white',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
@@ -63,28 +77,48 @@ const ToolBar: React.FC<ToolBarProps> = ({ setNodes, setEdges, saveToJsonFile, q
 
   const inputStyle = {
     padding: '0.5rem',
-    border: '1px solid #9c9c9c',
+    border: colorMode === 'dark' ? '1px solid #666' : '1px solid #9c9c9c',
     borderRadius: '4px',
     flexGrow: 1,
     marginRight: 'auto',
-    maxWidth: '250px',
+    maxWidth: '300px',
+    backgroundColor: colorMode === 'dark' ? '#333' : '#fff',
+    color: colorMode === 'dark' ? '#f0f0f0' : 'inherit',
   };
 
   const handleSaveFlow = () => {
     if (saveToJsonFile) {
+      // Validate that the questionnaire name is not empty
+      if (!questionnaireName || questionnaireName.trim() === "") {
+        toast.error("Please set a flow name before saving");
+        return;
+      }
+
       // Pass the questionnaire name to the parent component
       saveToJsonFile(questionnaireName);
+      toast.success(`Flow saved as ${questionnaireName}.json`);
     }
   };
 
   return (
-    <div style={{ padding: '0.5rem', display: 'flex', gap: '10px', borderBottomColor: 'grey', borderBottomWidth: '1px', borderBottomStyle: 'solid' }}>
+    <div
+      className={`toolbar ${colorMode === 'dark' ? 'dark' : ''}`}
+      style={{
+        padding: '0.5rem',
+        display: 'flex',
+        gap: '10px',
+        borderBottomColor: colorMode === 'dark' ? '#444' : 'grey',
+        borderBottomWidth: '1px',
+        borderBottomStyle: 'solid',
+        backgroundColor: colorMode === 'dark' ? '#222' : '#fff'
+      }}
+    >
       <input
         type="text"
-        placeholder="Flow name"
+        placeholder="Enter flow name..."
         value={questionnaireName}
         onChange={(e) => setQuestionnaireName(e.target.value)}
-        style={inputStyle}
+        style={inputStyle as React.CSSProperties}
       />
       <input
         ref={fileInputRef}
@@ -97,8 +131,8 @@ const ToolBar: React.FC<ToolBarProps> = ({ setNodes, setEdges, saveToJsonFile, q
         onClick={triggerFileInput}
         style={{
           ...buttonStyle,
-          backgroundColor: '#2196F3',
-        }}
+          backgroundColor: colorMode === 'dark' ? '#1976d2' : '#2196F3',
+        } as React.CSSProperties}
       >
         Open Flow
       </button>
@@ -108,8 +142,8 @@ const ToolBar: React.FC<ToolBarProps> = ({ setNodes, setEdges, saveToJsonFile, q
           onClick={handleSaveFlow}
           style={{
             ...buttonStyle,
-            backgroundColor: '#4CAF50',
-          }}
+            backgroundColor: colorMode === 'dark' ? '#388e3c' : '#4CAF50',
+          } as React.CSSProperties}
         >
           Save Flow
         </button>

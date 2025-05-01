@@ -10,7 +10,7 @@ export function Sidebar({ colorMode }: { colorMode: string }) {
     setType(nodeType);
   };
 
-  console.log(colorMode)
+  // console.log(colorMode)
 
   return (
     <div className={`sidebar ${colorMode === 'dark' ? 'dark' : ''}`}>

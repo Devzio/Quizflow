@@ -2,7 +2,7 @@ import { addEdge, Background, Connection, Controls, Edge, MiniMap, ReactFlow, us
 import ToolBar from './ToolBar';
 import { v4 as uuidv4 } from 'uuid';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { initialEdges, initialNodes } from '../constants';
 import { InputNode } from './node/InputNode';
 import { TextNode } from './node/TextNode';
@@ -52,11 +52,11 @@ const DnDFlow = () => {
   const [future, setFuture] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
 
   // disable context menu on right click
-  // useEffect(() => {
-  //   const handleContextMenu = (e: MouseEvent) => e.preventDefault();
-  //   document.addEventListener('contextmenu', handleContextMenu);
-  //   return () => document.removeEventListener('contextmenu', handleContextMenu);
-  // }, []);
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+    document.addEventListener('contextmenu', handleContextMenu);
+    return () => document.removeEventListener('contextmenu', handleContextMenu);
+  }, []);
 
   const [nodes, setNodes] = useNodesState<Node>(initialNodes);
   const [edges, setEdges] = useEdgesState<Edge>(initialEdges);
@@ -260,16 +260,21 @@ const DnDFlow = () => {
     // Use the provided name for the downloaded file
     const safeFileName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
     a.download = `${safeFileName}.json`;
-    
+
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
-  
+
   return (
     <div className="dndflow">
       <div className='reactflow-layout'>
-        <ToolBar setNodes={setNodes} setEdges={setEdges} saveToJsonFile={saveToJsonFile} />
+        <ToolBar
+          setNodes={setNodes}
+          setEdges={setEdges}
+          saveToJsonFile={saveToJsonFile}
+          colorMode={colorMode}
+        />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
             colorMode={colorMode}

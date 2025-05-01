@@ -1,4 +1,4 @@
-import { Background, BaseEdge, EdgeProps, EdgeText, getBezierPath } from '@xyflow/react';
+import { BaseEdge, EdgeProps, EdgeText, getBezierPath } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
 import { Check, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
