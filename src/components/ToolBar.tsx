@@ -23,6 +23,12 @@ const ToolBar: React.FC<ToolBarProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Store the original questionnaire name to restore it in case of an error
+    const originalName = questionnaireName;
+
+    // Store the file name to use in success message
+    const fileName = file.name;
+
     // Extract filename without extension to use as questionnaire name
     if (file.name && file.name.endsWith('.json')) {
       const nameWithoutExtension = file.name.substring(0, file.name.length - 5);
@@ -46,10 +52,10 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
         setNodes(converted.nodes);
         setEdges(converted.edges);
-        toast.success(`Flow ${questionnaireName}.json successfully opened`);
+        toast.success(`Flow "${fileName}" successfully opened`);
       } catch (err) {
-        // Reset the questionnaire name input when there's an error
-        setQuestionnaireName("");
+        // Restore the original questionnaire name on error
+        setQuestionnaireName(originalName);
         toast.error("Error opening flow");
         console.error(err);
       }
