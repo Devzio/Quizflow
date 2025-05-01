@@ -28,7 +28,7 @@ export function Sidebar({ colorMode }: { colorMode: string }) {
         onDragStart={(event) => onDragStart(event, 'text')}
         draggable
       >
-        Text Node
+        Question Node
       </div>
 
       {/* <div
