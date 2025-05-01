@@ -11,7 +11,7 @@ export function StartNode({ id }: NodeProps<StartNode>) {
   return (
     <>
       <button onClick={onDelete} className='btn-delete'>X</button>
-      <div className='textNode'>
+      <div className='textNode start-node'>
         <span>Start</span>
       </div>
       <Handle type="source" position={Position.Bottom} />

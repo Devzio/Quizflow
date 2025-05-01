@@ -12,7 +12,7 @@ export function EndNode({ id }: NodeProps<EndNode>) {
     <>
       <Handle type="target" position={Position.Top} />
       <button onClick={onDelete} className='btn-delete'>X</button>
-      <div className='textNode'>
+      <div className='textNode end-node'>
         <span>End</span>
       </div>
     </>

@@ -294,3 +294,44 @@ body {
   fill: none!important;
   stroke-width: 12%;
 }
+
+/* Colors for start and end nodes in the flow */
+.start-node {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 0px;
+}
+
+.end-node {
+  background-color: #F44336; /* Red */
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 0px;
+}
+
+/* Colors for start and end nodes in the sidebar */
+.dndflow .dndnode.start {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  font-weight: bold;
+  border-color: #2E7D32;
+}
+
+.dndflow .dndnode.end {
+  background-color: #F44336; /* Red */
+  color: white;
+  font-weight: bold;
+  border-color: #C62828;
+}
+
+/* Dark mode adjustments for sidebar nodes */
+.sidebar.dark .dndnode.start:hover {
+  background-color: #388E3C; /* Darker green on hover */
+}
+
+.sidebar.dark .dndnode.end:hover {
+  background-color: #D32F2F; /* Darker red on hover */
+}

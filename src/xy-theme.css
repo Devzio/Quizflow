@@ -2,7 +2,7 @@
  
 .react-flow {
   /* Custom Variables */
-  --xy-theme-selected: #F57DBD;
+  --xy-theme-selected: #2296F3;
   --xy-theme-hover: #C5C5C5;
   --xy-theme-edge-hover: black;
   --xy-theme-color-focus: #E8E8E8;
@@ -16,14 +16,17 @@
     0px 0.51px 1.01px 0px #0000001A;
 
   --xy-node-border-radius-default: 8px;
-
   --xy-handle-background-color-default: #ffffff;
   --xy-handle-border-color-default: #AAAAAA;
-
   --xy-edge-label-color-default: #505050;
+  --xy-handle-background-color-start: #4CAF50;
+  --xy-handle-background-color-end: #F44336;
+
 }
 
-.react-flow.dark { 
+/* Dark Mode Theming */
+.dark .react-flow__node{
+  background-color: rgb(49, 49, 49);
   --xy-node-boxshadow-default: 
   0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.05), /* light shadow */
   0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.13), /* medium shadow */
@@ -46,6 +49,14 @@
   flex-direction: column;
   border: var(--xy-node-border-default);
   color: var(--xy-node-color, var(--xy-node-color-default));
+}
+
+.react-flow__node:has(.start-node) {
+  background-color: var(--xy-handle-background-color-start);
+}
+
+.react-flow__node:has(.end-node) {
+  background-color: var(--xy-handle-background-color-end);
 }
 
 .react-flow__node.selectable:focus {
