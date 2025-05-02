@@ -24,11 +24,6 @@ export default function EdgeWithDeleteButton({
     targetPosition,
   });
 
-  // const onEdgeClick = (event: React.MouseEvent, id: string) => {
-  //   event.stopPropagation();
-  //   // Edge deletion logic will be handled by parent component
-  //   console.log(`Edge ${id} clicked for deletion`);
-  // };
   const { deleteElements } = useReactFlow();
 
   const onEdgeClick = () => {
@@ -39,7 +34,8 @@ export default function EdgeWithDeleteButton({
   const [edgeLabel, setEdgeLabel] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const handleLabelDoubleClick = () => {
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault(); // Prevent default context menu
     setIsModalOpen(true);
   };
 
@@ -74,35 +70,18 @@ export default function EdgeWithDeleteButton({
         markerEnd={markerEnd}
         style={style}
       />
-      {/* <foreignObject
-        width="20"
-        height="20"
-        x={labelX - 10}
-        y={labelY - 10}
-        className="edgebutton-foreignobject"
-        requiredExtensions="http://www.w3.org/1999/xhtml"
-      >
-        <div>
-          <button
-            className="edgebutton"
-            onClick={() => onEdgeClick()}
-          >
-            ×
-          </button>
-        </div>
-      </foreignObject> */}
       <EdgeText
         x={labelX}
         y={labelY}
         label={edgeLabel || 'No Answer'}
         className="edge-label"
-        onClick={handleLabelDoubleClick}
+        onContextMenu={handleContextMenu}
       />
       {isModalOpen && (
         <foreignObject
           width="300"
           height="100"
-          x={labelX - 100}
+          x={labelX - 75}
           y={labelY - 50}
           className="edge-modal"
         >
