@@ -116,9 +116,11 @@ const ToolBar: React.FC<ToolBarProps> = ({
         borderBottomColor: colorMode === 'dark' ? '#444' : 'grey',
         borderBottomWidth: '1px',
         borderBottomStyle: 'solid',
-        backgroundColor: colorMode === 'dark' ? '#222' : '#fff'
+        backgroundColor: colorMode === 'dark' ? '#222' : '#fff',
+        alignItems: 'center',
       }}
     >
+      <span style={{ fontWeight: 'bold' }}>Flow Name:</span>
       <input
         type="text"
         placeholder="Enter flow name..."
@@ -137,7 +139,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
         onClick={triggerFileInput}
         style={{
           ...buttonStyle,
-          backgroundColor: colorMode === 'dark' ? '#1976d2' : '#2196F3',
+          backgroundColor: colorMode === 'dark' ? '#9d9f00' : '#cbc818',
         } as React.CSSProperties}
       >
         Open Flow
@@ -154,6 +156,16 @@ const ToolBar: React.FC<ToolBarProps> = ({
           Save Flow
         </button>
       )}
+
+      <button
+        onClick={handleSaveFlow}
+        style={{
+          ...buttonStyle,
+          backgroundColor: colorMode === 'dark' ? '#1976d2' : '#2196F3',
+        } as React.CSSProperties}
+      >
+        Export Flow
+      </button>
     </div>
   );
 };
