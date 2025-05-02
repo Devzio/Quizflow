@@ -120,7 +120,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
         alignItems: 'center',
       }}
     >
-      <span style={{ fontWeight: 'bold' }}>Flow Name:</span>
+      <span className={`${colorMode === 'dark' ? 'dark' : ''}`} style={{ fontWeight: 'bold', color: colorMode === 'dark' ? '#fff' : '#222', }}>Flow Name:</span>
       <input
         type="text"
         placeholder="Enter flow name..."
