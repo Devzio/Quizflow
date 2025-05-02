@@ -3,7 +3,8 @@ import { Node, Edge } from '@xyflow/react';
 import {
   ModelQuestionnaireGraph, ModelQuestionnaireGraphFields,
   ModelNode, ModelNodeFields, ModelQuestion, ModelQuestionFields,
-  ModelEdge, ModelEdgeFields, ModelEdgeTriggerCriteria, ModelEdgeTriggerCriteriaFields
+  ModelEdge, ModelEdgeFields, ModelEdgeTriggerCriteria, ModelEdgeTriggerCriteriaFields,
+  ModelQuestionTag, ModelQuestionTagFields,
 } from './modelTypes'
 import { GenerateRandomPk } from '../utils/utils';
 
@@ -13,7 +14,8 @@ enum Model {
   Node = "questionnaire.node",
   Question = "questionnaire.question",
   Edge = "questionnaire.edge",
-  EdgetriggerCriteria = "questionnaire.edgetriggercriteria"
+  EdgetriggerCriteria = "questionnaire.edgetriggercriteria",
+  QuestionTag = "questionnaire.questiontag"
 }
 
 
@@ -38,10 +40,10 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
     } as ModelQuestionnaireGraphFields
   }
 
-  const nodeList: (ModelNode | ModelQuestion)[] = [];
+  const nodeList: (ModelNode | ModelQuestion | ModelQuestionTag)[] = [];
   nodes.forEach((n: Node) => {
     const ret = convertNode(parentGraph, n);
-    nodeList.push(ret._node, ret._question)
+    nodeList.push(ret._node, ret._question, ...ret._questionTags)
   });
 
   const edgeList: (ModelEdge | ModelEdgeTriggerCriteria)[] = [];
@@ -63,11 +65,11 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
  *
  * @param parent - a ModelQuestionnaireGraph object
  * @param node - a Node object
- * @returns a ModelNode object and a ModelQuestion object  
+ * @returns a ModelNode object, a ModelQuestion object, and a list of ModelQuestionTag objects
  */
 function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
 
-  const _question = convertQuestion(node)
+  const { _question, _questionTags } = convertQuestion(node)
 
   // convert node
   const _node: ModelNode = {
@@ -92,7 +94,7 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
     parent.fields.end = node.id;
   }
 
-  return { _node, _question }
+  return { _node, _question, _questionTags }
 };
 
 
@@ -100,7 +102,7 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
  * A funciton for a question conversion.
  *
  * @param node - a Node object
- * @returns a ModelQuestion object  
+ * @returns a ModelQuestion object and a list of ModelQuestionTag objects
  */
 function convertQuestion(node: Node) {
   const { data } = node;
@@ -125,13 +127,31 @@ function convertQuestion(node: Node) {
     }
   }
 
+  // add question tag 
+  const tag_choices = (data as {tag_choices: string[]}).tag_choices;
+  const _questionTags: ModelQuestionTag[] = [];
+  if (tag_choices && tag_choices.length > 0) {
+    let qt:ModelQuestionTag;
+    tag_choices.forEach(tag => {
+      qt = {
+        model: Model.QuestionTag,
+        pk: GenerateRandomPk(99),
+        fields: {
+          choice: tag,
+          question: _question.pk,
+        } as ModelQuestionTagFields
+      }
+      _questionTags.push(qt);
+    });
+  }
+
   // update end node
   if (node.type == "end") {
     _question.fields.auto_next = false
     _question.fields.type = "dead_end"
   }
 
-  return _question;
+  return { _question,  _questionTags};
 }
 
 
@@ -162,7 +182,7 @@ function convertEdge(edge: Edge) {
   if (edge.data?.label) {
     _edgeTC = convertEdgeTriggerCriteria(edge);
   }
-  console.log(edge.data)
+  
   return { _edge, _edgeTC: _edgeTC ?? null };
 };
 
@@ -191,6 +211,8 @@ const convertEdgeTriggerCriteria = (edge: Edge,) => {
     }
   }
 
+  // update choice 
+  // ReactFlow edge's "label" is the same as "choice" in edgetriggercriteria model
   _edgeTC.fields.choice = edge.data?.label ? edge.data?.label.toString() : "";
 
   return _edgeTC
