@@ -40,6 +40,17 @@ export type ModelQuestionFields = {
   [key: string]: any;
 }
 
+export type ModelQuestionTag = {
+  model: string,
+  pk: number
+  fields?: ModelQuestionTagFields;
+}
+
+export type ModelQuestionTagFields = {
+  choice: string,
+  question: string,
+  [key: string]: any;
+}
 
 export type ModelEdge = {
   model: string ;
