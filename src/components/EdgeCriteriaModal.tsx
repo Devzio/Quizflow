@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Plus, Pen, Trash2 } from 'lucide-react';
 import {
   getAllCriteria,
   addCriterion,
@@ -160,7 +161,10 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
         className="criteria-modal"
       >
         <div className="action-buttons">
-          <button onClick={handleOpenAddModal}>Add New Criterion</button>
+          <button onClick={handleOpenAddModal}>
+            <Plus className="" size={14} />
+            Add New Criterion
+          </button>
         </div>
         <h3>Edge Criteria List</h3>
 
@@ -176,8 +180,8 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
                       <strong>{criterion.label}</strong> ({criterion.value})
                     </div>
                     <div className="criterion-actions">
-                      <button onClick={() => handleEdit(criterion)}>Edit</button>
-                      <button onClick={() => handleDelete(criterion.id)}>Delete</button>
+                      <button onClick={() => handleEdit(criterion)}><Pen className="" size={14} /></button>
+                      <button onClick={() => handleDelete(criterion.id)}><Trash2 className="" size={14} /></button>
                     </div>
                   </div>
                 </li>
