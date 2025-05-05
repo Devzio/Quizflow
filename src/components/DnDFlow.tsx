@@ -16,7 +16,7 @@ import { EndNode } from './node/EndNode';
 import React, { ReactNode } from 'react';
 import { ConvertExport } from '../utils/export'
 import { GenerateRandomPk } from '../utils/utils';
-
+import EdgeCriteriaModal from './EdgeCriteriaModal';
 
 // Define custom node and edge types
 const nodeTypes: NodeTypes = {
@@ -50,6 +50,7 @@ const DnDFlow = () => {
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
   const [history, setHistory] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [future, setFuture] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
+  const [showCriteriaModal, setShowCriteriaModal] = useState(false);
 
   // disable context menu on right click
   useEffect(() => {
@@ -266,6 +267,14 @@ const DnDFlow = () => {
     document.body.removeChild(a);
   };
 
+  const handleOpenCriteriaModal = () => {
+    setShowCriteriaModal(true);
+  };
+
+  const handleCloseCriteriaModal = () => {
+    setShowCriteriaModal(false);
+  };
+
   return (
     <div className="dndflow">
       <div className='reactflow-layout'>
@@ -321,7 +330,13 @@ const DnDFlow = () => {
           </ReactFlow>
         </div>
       </div>
-      <Sidebar colorMode={colorMode} />
+      <Sidebar colorMode={colorMode} onOpenCriteriaModal={handleOpenCriteriaModal} />
+
+      {/* Edge Criteria Modal */}
+      <EdgeCriteriaModal
+        isOpen={showCriteriaModal}
+        onClose={handleCloseCriteriaModal}
+      />
     </div>
   );
 };

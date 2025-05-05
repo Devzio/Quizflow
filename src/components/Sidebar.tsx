@@ -1,7 +1,11 @@
 import { useDnD } from './DnDContext';
 
+interface SidebarProps {
+  colorMode: string;
+  onOpenCriteriaModal: () => void;
+}
 
-export function Sidebar({ colorMode }: { colorMode: string }) {
+export function Sidebar({ colorMode, onOpenCriteriaModal }: SidebarProps) {
   const [, setType] = useDnD();
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
@@ -31,13 +35,6 @@ export function Sidebar({ colorMode }: { colorMode: string }) {
         Question Node
       </div>
 
-      {/* <div
-        className="dndnode input"
-        onDragStart={(event) => onDragStart(event, 'input')}
-        draggable
-      >
-        Input Node
-      </div> */}
       <div
         className="dndnode end"
         onDragStart={(event) => onDragStart(event, 'end')}
@@ -45,18 +42,12 @@ export function Sidebar({ colorMode }: { colorMode: string }) {
       >
         End Node
       </div>
-      {/* <button
-        onClick={toggleColorMode}
-        className={`color-mode-toggle ${colorMode}`}
-      >
-        {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
-      </button> */}
-      {/* <h3 style={{ marginTop: "50px" }}>Interaction Instructions</h3> */}
-      {/* <ul style={{ marginLeft: "20px" }}>
-        <li>Right click Nodes to Edit or Delete</li>
-        <li>Left Click on edges to edit or delete (might change to right click)</li>
-        <li>Havent made up my mind yet on which is better... right click or left =(</li>
-      </ul> */}
+
+      <div className="sidebar-buttons">
+        <button className="sidebar-button" onClick={onOpenCriteriaModal}>
+          Manage Edge Criteria
+        </button>
+      </div>
     </div>
   );
 }
