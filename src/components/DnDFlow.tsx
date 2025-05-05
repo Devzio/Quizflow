@@ -51,6 +51,7 @@ const DnDFlow = () => {
   const [history, setHistory] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [future, setFuture] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [showCriteriaModal, setShowCriteriaModal] = useState(false);
+  const reactFlowInstance = useReactFlow();
 
   // disable context menu on right click
   useEffect(() => {
@@ -63,6 +64,11 @@ const DnDFlow = () => {
   const [edges, setEdges] = useEdgesState<Edge>(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
+
+  // Function to fit view - can be passed to child components
+  const fitViewToContents = useCallback(() => {
+    reactFlowInstance.fitView({ padding: 0.2, includeHiddenNodes: false });
+  }, [reactFlowInstance]);
 
   const updateHistory = useCallback(
     (newNodes: CustomNode[], newEdges: CustomEdge[]) => {
@@ -283,6 +289,7 @@ const DnDFlow = () => {
           setEdges={setEdges}
           saveToJsonFile={saveToJsonFile}
           colorMode={colorMode}
+          fitView={fitViewToContents} // Pass the fitView function to ToolBar
         />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow

@@ -8,13 +8,15 @@ interface ToolBarProps {
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>> | ((edges: Edge[]) => void);
   saveToJsonFile?: (name: string) => void;
   colorMode?: 'light' | 'dark';
+  fitView?: () => void; // Add fitView function prop
 }
 
 const ToolBar: React.FC<ToolBarProps> = ({
   setNodes,
   setEdges,
   saveToJsonFile,
-  colorMode = 'light'
+  colorMode = 'light',
+  fitView // Destructure the fitView prop
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [questionnaireName, setQuestionnaireName] = useState<string>("");
@@ -53,6 +55,14 @@ const ToolBar: React.FC<ToolBarProps> = ({
         setNodes(converted.nodes);
         setEdges(converted.edges);
         toast.success(`Flow "${fileName}" successfully opened`);
+        
+        // Call fitView after setting nodes and edges to ensure the flow is properly displayed
+        if (fitView) {
+          // Use a slight delay to ensure nodes are rendered before fitting view
+          setTimeout(() => {
+            fitView();
+          }, 100);
+        }
       } catch (err) {
         // Restore the original questionnaire name on error
         setQuestionnaireName(originalName);
