@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 
 type TextNode = Node<{ label: string }, 'text'>;
 
-export function TextNode({ data, id, selected }: NodeProps<TextNode>) {
+export function TextNode({ data, id }: NodeProps<TextNode>) {
   const { deleteElements, setNodes } = useReactFlow();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nodeLabel, setNodeLabel] = useState(data.label);
