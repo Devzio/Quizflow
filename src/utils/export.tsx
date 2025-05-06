@@ -5,6 +5,7 @@ import {
   ModelNode, ModelNodeFields, ModelQuestion, ModelQuestionFields,
   ModelEdge, ModelEdgeFields, ModelEdgeTriggerCriteria, ModelEdgeTriggerCriteriaFields,
   ModelQuestionTag, ModelQuestionTagFields,
+  ReactFlowEdge, ReactFlowNode
 } from './modelTypes'
 import { GenerateRandomPk } from '../utils/utils';
 
@@ -18,16 +19,24 @@ enum Model {
   QuestionTag = "questionnaire.questiontag"
 }
 
+export function ConvertExport(questionnareName: string, nodes: Node[], edges: Edge[]): string { 
+  return convertExport(questionnareName, nodes, edges, false);
+}
+export function ConvertExportWithReactFlowData(questionnareName: string, nodes: Node[], edges: Edge[]): string { 
+  return convertExport(questionnareName, nodes, edges, true);
+}
+
 
 /**
  * An export function for json export. 
  *
+ * @param includeFlowData - whether reactflow data is included
  * @param questionnareName - the questionnaire name
  * @param nodes - a list of Node objects
  * @param edges - a list of Edge objects 
  * @returns a Json string
  */
-export function ConvertExport(questionnareName: string, nodes: Node[], edges: Edge[]): string {
+function convertExport(questionnareName: string, nodes: Node[], edges: Edge[], includeFlowData: boolean = false): string {
 
   const parentGraph: ModelQuestionnaireGraph = {
     model: Model.QuestionnaireGraph,
@@ -42,13 +51,13 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
 
   const nodeList: (ModelNode | ModelQuestion | ModelQuestionTag)[] = [];
   nodes.forEach((n: Node) => {
-    const ret = convertNode(parentGraph, n);
+    const ret = convertNode(includeFlowData, parentGraph, n);
     nodeList.push(ret._node, ret._question, ...ret._questionTags)
   });
 
   const edgeList: (ModelEdge | ModelEdgeTriggerCriteria)[] = [];
   edges.forEach((e: Edge) => {
-    const ret = convertEdge(e)
+    const ret = convertEdge(includeFlowData, e)
     if (ret._edgeTC) {
       edgeList.push(ret._edgeTC);
     }
@@ -67,7 +76,7 @@ export function ConvertExport(questionnareName: string, nodes: Node[], edges: Ed
  * @param node - a Node object
  * @returns a ModelNode object, a ModelQuestion object, and a list of ModelQuestionTag objects
  */
-function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
+function convertNode(includeFlowData: boolean, parent: ModelQuestionnaireGraph, node: Node) {
 
   const { _question, _questionTags } = convertQuestion(node)
 
@@ -92,6 +101,16 @@ function convertNode(parent: ModelQuestionnaireGraph, node: Node) {
     parent.fields.start = node.id;
   } else if (node.type == 'end') {
     parent.fields.end = node.id;
+  }
+
+  // add reactflow data 
+  if (includeFlowData) {
+    _node.reactflow = {
+      positions: {
+        x: node.position.x,
+        y: node.position.y,
+      }
+    } as ReactFlowNode;
   }
 
   return { _node, _question, _questionTags }
@@ -161,7 +180,7 @@ function convertQuestion(node: Node) {
  * @param edge - a Edge object
  * @returns a ModelEdge object and optionally a ModelEdgeTriggerCriteria object 
  */
-function convertEdge(edge: Edge) {
+function convertEdge(includeFlowData: boolean, edge: Edge) {
 
   const _edge: ModelEdge = {
     model: Model.Edge,
@@ -181,6 +200,14 @@ function convertEdge(edge: Edge) {
 
   if (edge.data?.label) {
     _edgeTC = convertEdgeTriggerCriteria(edge);
+  }
+
+   // add reactflow data 
+   if (includeFlowData) {
+    _edge.reactflow = {
+      animated: edge.animated,
+      type: edge.type,
+    } as ReactFlowEdge;
   }
   
   return { _edge, _edgeTC: _edgeTC ?? null };

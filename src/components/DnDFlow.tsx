@@ -14,8 +14,8 @@ import { Sidebar } from './Sidebar';
 import { useDnD } from './DnDContext';
 import { EndNode } from './node/EndNode';
 import React, { ReactNode } from 'react';
-import { ConvertExport } from '../utils/export'
-import { GenerateRandomPk } from '../utils/utils';
+import { ConvertExport, ConvertExportWithReactFlowData } from '../utils/export'
+import { GenerateRandomPk, SaveJsonFile } from '../utils/utils';
 
 
 // Define custom node and edge types
@@ -251,20 +251,14 @@ const DnDFlow = () => {
   const saveToJsonFile = (name: string) => {
     // Use the provided questionnaire name from ToolBar
     const exportdata = ConvertExport(name, nodes, edges);
-    const data = JSON.stringify(JSON.parse(exportdata), null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-
-    // Use the provided name for the downloaded file
-    const safeFileName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
-    a.download = `${safeFileName}.json`;
-
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    SaveJsonFile(name, exportdata)
   };
+
+  const exportToJsonFile = (name: string) => {
+    // Use the provided questionnaire name from ToolBar
+    const exportdata = ConvertExportWithReactFlowData(name, nodes, edges);
+    SaveJsonFile(name+".flow", exportdata)
+  }
 
   return (
     <div className="dndflow">
@@ -273,6 +267,7 @@ const DnDFlow = () => {
           setNodes={setNodes}
           setEdges={setEdges}
           saveToJsonFile={saveToJsonFile}
+          exportToJsonFIle={exportToJsonFile}
           colorMode={colorMode}
         />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
