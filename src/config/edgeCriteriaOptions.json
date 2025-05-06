@@ -1,13 +1,13 @@
 [
   {
     "id": "age_gte",
-    "value": "age_gte",
-    "label": "Age greater than or equal"
+    "value": "age_gte_18",
+    "label": "Age greater than or equal to 18"
   },
   {
     "id": "age_lt",
-    "value": "age_lt",
-    "label": "Age less than"
+    "value": "age_lt_18",
+    "label": "Age less than 18"
   },
   {
     "id": "authenticated",
