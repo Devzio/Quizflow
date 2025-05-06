@@ -17,6 +17,14 @@ export type ModelNode = {
   model: string;
   pk: string;
   fields?: ModelNodeFields;
+  reactflow?: ReactFlowNode;
+}
+
+export type ReactFlowNode = {
+  positions: {
+    x: number,
+    y: number
+  }
 }
   
 export type ModelNodeFields = {
@@ -56,7 +64,12 @@ export type ModelEdge = {
   model: string ;
   pk: number | string; 
   fields?: ModelEdgeFields;
-  
+  reactflow?: ReactFlowEdge;
+}
+
+export type ReactFlowEdge = {
+  animated?: boolean;
+  type?: string;
 }
 
 export type ModelEdgeFields = {

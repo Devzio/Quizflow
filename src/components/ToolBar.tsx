@@ -7,13 +7,17 @@ interface ToolBarProps {
   setNodes: React.Dispatch<React.SetStateAction<Node[]>> | ((nodes: Node[]) => void);
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>> | ((edges: Edge[]) => void);
   saveToJsonFile?: (name: string) => void;
+  exportToJsonFIle?: (name: string) => void;
   colorMode?: 'light' | 'dark';
 }
+
+type SaveFunction = (name: string) => void;
 
 const ToolBar: React.FC<ToolBarProps> = ({
   setNodes,
   setEdges,
   saveToJsonFile,
+  exportToJsonFIle,
   colorMode = 'light'
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -92,17 +96,20 @@ const ToolBar: React.FC<ToolBarProps> = ({
     color: colorMode === 'dark' ? '#f0f0f0' : 'inherit',
   };
 
-  const handleSaveFlow = () => {
-    if (saveToJsonFile) {
-      // Validate that the questionnaire name is not empty
-      if (!questionnaireName || questionnaireName.trim() === "") {
-        toast.error("Please set a flow name before saving");
-        return;
-      }
+const handleSaveFlow = (saveFn: SaveFunction) => {
+    // Validate that the questionnaire name is not empty
+    if (!questionnaireName || questionnaireName.trim() === "") {
+      toast.error("Please set a flow name before saving");
+      return;
+    }
 
-      // Pass the questionnaire name to the parent component
+    if (saveFn == saveToJsonFile) {
       saveToJsonFile(questionnaireName);
       toast.success(`Flow saved as ${questionnaireName}.json`);
+    }
+    if (saveFn == exportToJsonFIle) {
+      exportToJsonFIle(questionnaireName);
+      toast.success(`Flow saved as ${questionnaireName}.flow.json`);
     }
   };
 
@@ -147,7 +154,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
       {saveToJsonFile && (
         <button
-          onClick={handleSaveFlow}
+          onClick={() => handleSaveFlow(saveToJsonFile)}
           style={{
             ...buttonStyle,
             backgroundColor: colorMode === 'dark' ? '#388e3c' : '#4CAF50',
@@ -157,15 +164,18 @@ const ToolBar: React.FC<ToolBarProps> = ({
         </button>
       )}
 
-      <button
-        onClick={handleSaveFlow}
-        style={{
-          ...buttonStyle,
-          backgroundColor: colorMode === 'dark' ? '#1976d2' : '#2196F3',
-        } as React.CSSProperties}
-      >
-        Export Flow
-      </button>
+      {exportToJsonFIle && (
+        <button
+          onClick={() => handleSaveFlow(exportToJsonFIle)}
+          style={{
+            ...buttonStyle,
+            backgroundColor: colorMode === 'dark' ? '#1976d2' : '#2196F3',
+          } as React.CSSProperties}
+        >
+          Export Flow
+        </button>
+      )}
+
     </div>
   );
 };
