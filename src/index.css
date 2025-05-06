@@ -310,6 +310,15 @@ body {
   
 }
 
+.edge-criteria-dropdown {
+  padding: 1px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  /* font-size: 14px; */
+}
+.modal-content_edge select option{
+  font-size: 12px;
+}
 .modal-content_edge input:focus, 
 .modal-content_edge select:focus, 
 .modal-content_node input:focus,
@@ -538,12 +547,7 @@ body {
   gap: 8px;
 } */
 
-.edge-criteria-dropdown {
-  padding: 1px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
+
 
 /* Sidebar Button Styles */
 .sidebar-buttons {

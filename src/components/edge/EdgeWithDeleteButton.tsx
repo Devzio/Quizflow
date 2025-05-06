@@ -160,6 +160,7 @@ export default function EdgeWithDeleteButton({
               value={edgeCriteria}
               onChange={handleCriteriaChange}
               className="edge-criteria-dropdown"
+
             >
               <option value="">Select Edge Criteria</option>
               {criteriaOptions.map((option) => (
@@ -167,6 +168,7 @@ export default function EdgeWithDeleteButton({
                   {option.label}
                 </option>
               ))}
+
             </select>
             <div style={{ display: 'flex', justifyContent: 'end' }}>
               <button onClick={deleteEdge} className='btn-deleteEdge' >
