@@ -137,7 +137,7 @@ export default function EdgeWithDeleteButton({
       <EdgeText
         x={labelX}
         y={labelY}
-        label={edgeLabel || 'No Answer'}
+        label={edgeLabel || '(No Answer)'}
         className="edge-label"
         onContextMenu={handleContextMenu}
       />
@@ -145,7 +145,7 @@ export default function EdgeWithDeleteButton({
         <foreignObject
           width="300"
           height="150"
-          x={labelX - 75}
+          x={labelX - 87}
           y={labelY - 90}
           className="edge-modal"
         >
@@ -170,12 +170,12 @@ export default function EdgeWithDeleteButton({
             </select>
             <div style={{ display: 'flex', justifyContent: 'end' }}>
               <button onClick={deleteEdge} className='btn-deleteEdge' >
-                <Trash2 className="no-edge-style" size={12} />
+                <Trash2 className="remove_svg_style" size={12} />
               </button>
               <button
                 onClick={handleModalClose} className='btn-confirmEdge'
               >
-                <Check className="no-edge-style" size={14} />
+                <Check className="remove_svg_style" size={14} />
               </button>
             </div>
           </div>

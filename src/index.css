@@ -38,15 +38,16 @@ body,
 }
 
 .textNode {
-  width: 8rem;
+  min-width: 8rem;
+  max-width: 12rem;
   /* height: 3rem; */
   text-align: center;
   /* border-radius: 0.5rem;
   background-color: white; */
   /* padding: 0.3rem; */
   /* border: solid 1px black; */
-  overflow-x: auto;
-  overflow-y: hidden;
+  /* overflow-x: auto;
+  overflow-y: hidden; */
 }
 
 .btn-delete{
@@ -260,13 +261,36 @@ body {
 }
 
 /* removes edge styling on svg icons */
-.no-edge-style path {
+.remove_svg_style path {
   stroke-dasharray: none !important;
   stroke-dashoffset: 0 !important;
   animation: none !important;
 }
-.no-edge-style{
+.remove_svg_style{
   position: relative!important;
+}
+
+.modal-content_node{
+  position: absolute;
+  z-index: 100;
+  background-color: #fff;
+  border: 1px solid #999;
+  border-radius: 5px;
+  padding: 0.3rem;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 8rem;
+  width: 100%;
+  max-width: 12rem;
+  top: -60px;
+  left: 0px;
+}
+
+.modal-content_node input{
+  font-size: 10px;
+
 }
 
 .modal-content_edge{
@@ -286,9 +310,13 @@ body {
   
 }
 
-.modal-content_edge input:focus, .modal-content_edge select:focus{
+.modal-content_edge input:focus, 
+.modal-content_edge select:focus, 
+.modal-content_node input:focus,
+.modal-content_node select:focus{
   outline: none;
 }
+
 .btn-deleteEdge{
   background-color: #F44336;
   color: white;
@@ -358,6 +386,7 @@ body {
   font-weight: bold;
   border-radius: 5px;
   padding: 0px;
+  width: 8rem;
 }
 
 .end-node {
@@ -366,6 +395,7 @@ body {
   font-weight: bold;
   border-radius: 5px;
   padding: 0px;
+  width: 8rem;
 }
 
 /* Colors for start and end nodes in the sidebar */

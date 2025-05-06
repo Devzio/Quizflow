@@ -1,18 +1,15 @@
 import { Handle, Position, Node, NodeProps, useReactFlow } from '@xyflow/react';
-import { Check } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 type TextNode = Node<{ label: string }, 'text'>;
 
 export function TextNode({ data, id, selected }: NodeProps<TextNode>) {
-  const { deleteElements, setNodes, addNodes } = useReactFlow();
+  const { deleteElements, setNodes } = useReactFlow();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nodeLabel, setNodeLabel] = useState(data.label);
   const modalRef = useRef<HTMLDivElement>(null);
-
-  const onEdit = () => {
-    setIsModalOpen(true);
-  };
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   const onDelete = () => {
     deleteElements({ nodes: [{ id }] });
@@ -26,39 +23,7 @@ export function TextNode({ data, id, selected }: NodeProps<TextNode>) {
         selected: node.id === id
       }))
     );
-
-    const contextMenu = document.createElement('div');
-    contextMenu.style.position = 'absolute';
-    contextMenu.style.left = `${event.clientX}px`;
-    contextMenu.style.top = `${event.clientY}px`;
-    contextMenu.style.zIndex = '1000';
-    contextMenu.style.backgroundColor = 'white';
-    contextMenu.style.padding = '8px';
-    contextMenu.style.borderRadius = '4px';
-    contextMenu.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
-
-    const editOption = document.createElement('div');
-    editOption.textContent = 'Edit';
-    editOption.style.padding = '4px 8px';
-    editOption.style.cursor = 'pointer';
-    editOption.onclick = onEdit;
-
-    const deleteOption = document.createElement('div');
-    deleteOption.textContent = 'Delete';
-    deleteOption.style.padding = '4px 8px';
-    deleteOption.style.cursor = 'pointer';
-    deleteOption.onclick = onDelete;
-
-    contextMenu.appendChild(editOption);
-    contextMenu.appendChild(deleteOption);
-    document.body.appendChild(contextMenu);
-
-    const closeMenu = () => {
-      document.body.removeChild(contextMenu);
-      document.removeEventListener('click', closeMenu);
-    };
-
-    document.addEventListener('click', closeMenu);
+    setIsModalOpen(true);
   };
 
   const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,46 +48,90 @@ export function TextNode({ data, id, selected }: NodeProps<TextNode>) {
     );
   };
 
+  // This effect will handle clicks outside the modal
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && event.target instanceof HTMLElement && !modalRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      // Only close if clicking outside both modal and node
+      if (
+        isModalOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node) &&
+        !(nodeRef.current && nodeRef.current.contains(event.target as Node))
+      ) {
         handleModalClose();
       }
-    };
+    }
 
+    // Only add the event listener when the modal is open
     if (isModalOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Add event listeners for both mousedown (right-click) and click (left-click) events
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('click', handleClickOutside);
+      }, 50);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, [isModalOpen]);
 
   return (
-    <>
+    <div
+      ref={nodeRef}
+      style={{ width: '100%', height: '100%' }}
+      onContextMenu={onNodeContextMenu}
+    >
       <Handle type="target" position={Position.Top} />
 
-      <div className='textNode' onContextMenu={onNodeContextMenu}>
-        <span>{data.label}</span>
+      <div className='textNode'>
+        <span>{data.label || "(No Question Set)"}</span>
       </div>
 
       {isModalOpen && (
-        <div className="modal-content" ref={modalRef} >
-          <input
-            type="text"
-            value={nodeLabel}
-            onChange={handleLabelChange}
-            placeholder="Node label"
-          />
-          <button onClick={handleModalClose}>
-            <Check className="no-edge-style" size={16} />
-          </button>
-        </div>
+        <foreignObject
+          width="300"
+          height="100"
+          x={-50}
+          y={-40}
+          className="node-modal"
+        >
+          <div
+            className="modal-content_node"
+            ref={modalRef}
+
+          >
+            <input
+              type="text"
+              value={nodeLabel}
+              onChange={handleLabelChange}
+              placeholder="Node label"
+              className="nodrag nopan"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleModalClose();
+                }
+              }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', justifyContent: 'end' }}>
+              <button onClick={onDelete} className='btn-deleteEdge nodrag'>
+                <Trash2 className="remove_svg_style" size={12} />
+              </button>
+              <button
+                onClick={handleModalClose} className='btn-confirmEdge nodrag'
+              >
+                <Check className="remove_svg_style" size={14} />
+              </button>
+            </div>
+          </div>
+        </foreignObject>
       )}
 
       <Handle type="source" position={Position.Bottom} />
-    </>
+    </div>
   );
 }
 
