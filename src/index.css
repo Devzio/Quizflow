@@ -415,6 +415,25 @@ body {
   border-color: #2E7D32;
 }
 
+.dndflow .dndnode.start.disabled {
+  background-color: #A5D6A7; /* Lighter green for disabled state */
+  color: #E8F5E9;
+  opacity: 0.7;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.dndflow .dndnode.start.disabled span {
+  font-size: 0.7em;
+  margin-left: 5px;
+}
+
+.sidebar.dark .dndnode.start.disabled {
+  background-color: #2E7D32; /* Darker green for dark mode disabled */
+  color: #C8E6C9;
+  opacity: 0.7;
+}
+
 .dndflow .dndnode.end {
   background-color: #F44336; /* Red */
   color: white;

@@ -3,9 +3,10 @@ import { useDnD } from './DnDContext';
 interface SidebarProps {
   colorMode: string;
   onOpenCriteriaModal: () => void;
+  hasStartNode?: boolean;
 }
 
-export function Sidebar({ colorMode, onOpenCriteriaModal }: SidebarProps) {
+export function Sidebar({ colorMode, onOpenCriteriaModal, hasStartNode = false }: SidebarProps) {
   const [, setType] = useDnD();
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
@@ -20,11 +21,14 @@ export function Sidebar({ colorMode, onOpenCriteriaModal }: SidebarProps) {
     <div className={`sidebar ${colorMode === 'dark' ? 'dark' : ''}`}>
       <div className="description">You can drag these nodes to the pane on the left.</div>
       <div
-        className="dndnode start"
-        onDragStart={(event) => onDragStart(event, 'start')}
-        draggable
+        className={`dndnode start ${hasStartNode ? 'disabled' : ''}`}
+        onDragStart={(event) => {
+          if (!hasStartNode) onDragStart(event, 'start');
+        }}
+        draggable={!hasStartNode}
+        title={hasStartNode ? 'A Start Node already exists' : 'Start Node'}
       >
-        Start Node
+        Start Node {hasStartNode && <span>(Limited to 1)</span>}
       </div>
 
       <div

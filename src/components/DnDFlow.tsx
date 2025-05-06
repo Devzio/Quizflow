@@ -53,14 +53,17 @@ const DnDFlow = () => {
   const [showCriteriaModal, setShowCriteriaModal] = useState(false);
   const reactFlowInstance = useReactFlow();
 
+  const [nodes, setNodes] = useNodesState<Node>(initialNodes);
+
+  // Check if a start node already exists
+  const hasStartNode = nodes.some(node => node.type === 'start');
+
   // disable context menu on right click
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => e.preventDefault();
     document.addEventListener('contextmenu', handleContextMenu);
     return () => document.removeEventListener('contextmenu', handleContextMenu);
   }, []);
-
-  const [nodes, setNodes] = useNodesState<Node>(initialNodes);
   const [edges, setEdges] = useEdgesState<Edge>(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
@@ -337,7 +340,7 @@ const DnDFlow = () => {
           </ReactFlow>
         </div>
       </div>
-      <Sidebar colorMode={colorMode} onOpenCriteriaModal={handleOpenCriteriaModal} />
+      <Sidebar colorMode={colorMode} onOpenCriteriaModal={handleOpenCriteriaModal} hasStartNode={hasStartNode} />
 
       {/* Edge Criteria Modal */}
       <EdgeCriteriaModal
