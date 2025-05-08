@@ -1,0 +1,62 @@
+[
+  {
+    "id": "age_gte",
+    "value": "age_gte",
+    "label": "Age greater than or equal"
+  },
+  {
+    "id": "age_lt",
+    "value": "age_lt",
+    "label": "Age less than"
+  },
+  {
+    "id": "authenticated",
+    "value": "authenticated",
+    "label": "Authenticated"
+  },
+  {
+    "id": "bmi_gte",
+    "value": "bmi_gte",
+    "label": "BMI greater than or equal"
+  },
+  {
+    "id": "bmi_lt",
+    "value": "bmi_lt",
+    "label": "BMI less than"
+  },
+  {
+    "id": "gender_female",
+    "value": "gender_female",
+    "label": "Gender is female"
+  },
+  {
+    "id": "gender_not_female",
+    "value": "gender_not_female",
+    "label": "Gender is not female"
+  },
+  {
+    "id": "list_value_not_set",
+    "value": "list_value_not_set",
+    "label": "List value not set"
+  },
+  {
+    "id": "list_value_set",
+    "value": "list_value_set",
+    "label": "List value set"
+  },
+  {
+    "id": "bool_no",
+    "value": "bool_no",
+    "label": "No"
+  },
+  {
+    "id": "unauthenticated",
+    "value": "unauthenticated",
+    "label": "Unauthenticated"
+  },
+  {
+    "id": "bool_yes",
+    "value": "bool_yes",
+    "label": "Yes"
+  }
+]

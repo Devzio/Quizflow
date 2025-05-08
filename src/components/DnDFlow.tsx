@@ -16,7 +16,7 @@ import { EndNode } from './node/EndNode';
 import React, { ReactNode } from 'react';
 import { ConvertExport, ConvertExportWithReactFlowData } from '../utils/export'
 import { GenerateRandomPk, SaveJsonFile } from '../utils/utils';
-
+import EdgeCriteriaModal from './EdgeCriteriaModal';
 
 // Define custom node and edge types
 const nodeTypes: NodeTypes = {
@@ -50,6 +50,13 @@ const DnDFlow = () => {
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
   const [history, setHistory] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [future, setFuture] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
+  const [showCriteriaModal, setShowCriteriaModal] = useState(false);
+  const reactFlowInstance = useReactFlow();
+
+  const [nodes, setNodes] = useNodesState<Node>(initialNodes);
+
+  // Check if a start node already exists
+  const hasStartNode = nodes.some(node => node.type === 'start');
 
   // disable context menu on right click
   useEffect(() => {
@@ -57,11 +64,14 @@ const DnDFlow = () => {
     document.addEventListener('contextmenu', handleContextMenu);
     return () => document.removeEventListener('contextmenu', handleContextMenu);
   }, []);
-
-  const [nodes, setNodes] = useNodesState<Node>(initialNodes);
   const [edges, setEdges] = useEdgesState<Edge>(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
+
+  // Function to fit view - can be passed to child components
+  const fitViewToContents = useCallback(() => {
+    reactFlowInstance.fitView({ padding: 0.2, includeHiddenNodes: false });
+  }, [reactFlowInstance]);
 
   const updateHistory = useCallback(
     (newNodes: CustomNode[], newEdges: CustomEdge[]) => {
@@ -182,7 +192,7 @@ const DnDFlow = () => {
         const typedNewNode = {
           ...newNode,
           data: {
-            label: type === 'text' ? 'New Text' : ""
+            label: type === 'text' ? '(New Question)' : ""
           }
         } as typeof prevNodes[0];
 
@@ -257,7 +267,7 @@ const DnDFlow = () => {
   const exportToJsonFile = (name: string) => {
     // Use the provided questionnaire name from ToolBar
     const exportdata = ConvertExportWithReactFlowData(name, nodes, edges);
-    SaveJsonFile(name+".flow", exportdata)
+    SaveJsonFile(name + ".flow", exportdata)
   }
 
   return (
@@ -269,6 +279,7 @@ const DnDFlow = () => {
           saveToJsonFile={saveToJsonFile}
           exportToJsonFIle={exportToJsonFile}
           colorMode={colorMode}
+          fitView={fitViewToContents} // Pass the fitView function to ToolBar
         />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
@@ -316,7 +327,13 @@ const DnDFlow = () => {
           </ReactFlow>
         </div>
       </div>
-      <Sidebar colorMode={colorMode} />
+      <Sidebar colorMode={colorMode} onOpenCriteriaModal={handleOpenCriteriaModal} hasStartNode={hasStartNode} />
+
+      {/* Edge Criteria Modal */}
+      <EdgeCriteriaModal
+        isOpen={showCriteriaModal}
+        onClose={handleCloseCriteriaModal}
+      />
     </div>
   );
 };

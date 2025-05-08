@@ -9,6 +9,7 @@ interface ToolBarProps {
   saveToJsonFile?: (name: string) => void;
   exportToJsonFIle?: (name: string) => void;
   colorMode?: 'light' | 'dark';
+  fitView?: () => void; // Add fitView function prop
 }
 
 type SaveFunction = (name: string) => void;
@@ -18,7 +19,8 @@ const ToolBar: React.FC<ToolBarProps> = ({
   setEdges,
   saveToJsonFile,
   exportToJsonFIle,
-  colorMode = 'light'
+  colorMode = 'light',
+  fitView // Destructure the fitView prop
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [questionnaireName, setQuestionnaireName] = useState<string>("");
@@ -96,7 +98,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
     color: colorMode === 'dark' ? '#f0f0f0' : 'inherit',
   };
 
-const handleSaveFlow = (saveFn: SaveFunction) => {
+  const handleSaveFlow = (saveFn: SaveFunction) => {
     // Validate that the questionnaire name is not empty
     if (!questionnaireName || questionnaireName.trim() === "") {
       toast.error("Please set a flow name before saving");
@@ -127,7 +129,7 @@ const handleSaveFlow = (saveFn: SaveFunction) => {
         alignItems: 'center',
       }}
     >
-      <span style={{ fontWeight: 'bold' }}>Flow Name:</span>
+      <span className={`${colorMode === 'dark' ? 'dark' : ''}`} style={{ fontWeight: 'bold', color: colorMode === 'dark' ? '#fff' : '#222', }}>Flow Name:</span>
       <input
         type="text"
         placeholder="Enter flow name..."
