@@ -20,7 +20,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   saveToJsonFile,
   exportToJsonFIle,
   colorMode = 'light',
-  // fitView // Destructure the fitView prop
+  fitView // Destructure the fitView prop
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [questionnaireName, setQuestionnaireName] = useState<string>("");
@@ -58,6 +58,12 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
         setNodes(converted.nodes);
         setEdges(converted.edges);
+
+        // Trigger fitView after setting nodes and edges
+        if (fitView) {
+          setTimeout(() => fitView(), 100); // Small delay to ensure nodes are rendered
+        }
+
         toast.success(`Flow "${fileName}" successfully opened`);
       } catch (err) {
         // Restore the original questionnaire name on error
