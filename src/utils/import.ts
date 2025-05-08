@@ -64,7 +64,7 @@ export function convertJson(input: any): JsonJson {
 
   const labelMap = new Map<number, string>();
   criteria.forEach((c: any) => {
-    labelMap.set(c.fields.edge, c.fields.choice.replace('Boolean ', ''));
+    labelMap.set(c.fields.edge, c.fields.choice?.replace('Boolean ', '') ?? '');
   });
 
   const childMap = new Map<string, string[]>();
@@ -90,10 +90,12 @@ export function convertJson(input: any): JsonJson {
     const questionObject = questions.find((q: any) => q.pk === raw?.fields?.question);
     const isDeadEnd = questionObject?.fields?.type === 'dead_end';
 
+    const pos = raw.reactflow?.positions ?? { x, y };
+
     const node: JsonNode = {
       id,
       type: isDeadEnd ? 'end' : nodeMap.size === 0 ? 'start' : 'text',
-      position: { x, y },
+      position: pos,
       data: {
         label,
         fields,
@@ -101,24 +103,20 @@ export function convertJson(input: any): JsonJson {
       },
     };
 
-    if (isDeadEnd) {
-      console.log('✅ end_node:', node);
-    }
-
     nodeMap.set(id, node);
     positioned.add(id);
 
     const children = childMap.get(id) || [];
     if (children.length === 1) {
-      placeNode(children[0], x, y + spacingY);
+      placeNode(children[0], pos.x, pos.y + spacingY);
     } else if (children.length === 2) {
       const left = edgeMap.get(`${id}->${children[0]}`) === 'No' ? children[0] : children[1];
       const right = edgeMap.get(`${id}->${children[0]}`) === 'Yes' ? children[0] : children[1];
-      placeNode(left, x - spacingX, y + spacingY);
-      placeNode(right, x + spacingX, y + spacingY);
+      placeNode(left, pos.x - spacingX, pos.y + spacingY);
+      placeNode(right, pos.x + spacingX, pos.y + spacingY);
     } else {
       children.forEach((childId, i) => {
-        placeNode(childId, x + i * spacingX, y + spacingY);
+        placeNode(childId, pos.x + i * spacingX, pos.y + spacingY);
       });
     }
   }
@@ -131,11 +129,16 @@ export function convertJson(input: any): JsonJson {
 
   placeNode(startNode.pk, 0, 0);
 
-  nodesRaw.forEach((n: any, index: any) => {
+  nodesRaw.forEach((n: any, index: number) => {
     if (!positioned.has(n.pk)) {
-      const offsetX = (index % 5) * spacingX;
-      const offsetY = Math.floor(index / 5) * spacingY + 600;
-      placeNode(n.pk, offsetX, offsetY);
+      const pos = n.reactflow?.positions;
+      if (pos) {
+        placeNode(n.pk, pos.x, pos.y);
+      } else {
+        const offsetX = (index % 5) * spacingX;
+        const offsetY = Math.floor(index / 5) * spacingY + 600;
+        placeNode(n.pk, offsetX, offsetY);
+      }
     }
   });
 
@@ -143,8 +146,8 @@ export function convertJson(input: any): JsonJson {
     id: e.pk.toString(),
     source: e.fields.start,
     target: e.fields.end,
-    type: 'straightEdge',
-    animated: true,
+    type: e.reactflow?.type || 'straightEdge',
+    animated: e.reactflow?.animated ?? true,
     data: {
       label: labelMap.get(e.pk) ?? '',
       fields: { ...e.fields },
