@@ -20,7 +20,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   saveToJsonFile,
   exportToJsonFIle,
   colorMode = 'light',
-  fitView // Destructure the fitView prop
+  // fitView // Destructure the fitView prop
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [questionnaireName, setQuestionnaireName] = useState<string>("");
