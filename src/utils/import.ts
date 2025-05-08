@@ -18,6 +18,7 @@ type JsonEdge = {
   target: string;
   type: string;
   animated?: boolean;
+  label?: string;
   data: {
     label: string;
     fields?: any;
@@ -39,7 +40,11 @@ export function convertJson(input: any): JsonJson {
       ...e,
       type: e.type || 'straightEdge',
       animated: e.animated ?? true,
-      data: { label: e.data?.label ?? e.label ?? '' },
+      label: e.data?.label ?? e.label ?? '',
+      data: {
+        ...e.data,
+        label: e.data?.label ?? e.label ?? '',
+      },
     }));
     return {
       model: 'questionnairegraph',
@@ -62,9 +67,9 @@ export function convertJson(input: any): JsonJson {
     questionMap.set(q.pk, q.fields);
   });
 
-  const labelMap = new Map<number, string>();
+  const labelMap = new Map<string, string>();  // 🔧 number → string
   criteria.forEach((c: any) => {
-    labelMap.set(c.fields.edge, c.fields.choice?.replace('Boolean ', '') ?? '');
+    labelMap.set(String(c.fields.edge), c.fields.choice?.replace('Boolean ', '') ?? '');
   });
 
   const childMap = new Map<string, string[]>();
@@ -74,7 +79,7 @@ export function convertJson(input: any): JsonJson {
     const end = e.fields.end;
     if (!childMap.has(start)) childMap.set(start, []);
     childMap.get(start)?.push(end);
-    edgeMap.set(`${start}->${end}`, labelMap.get(e.pk) || '');
+    edgeMap.set(`${start}->${end}`, labelMap.get(String(e.pk)) || '');
   });
 
   const positioned = new Set<string>();
@@ -142,18 +147,22 @@ export function convertJson(input: any): JsonJson {
     }
   });
 
-  const edges: JsonEdge[] = edgesRaw.map((e: any) => ({
-    id: e.pk.toString(),
-    source: e.fields.start,
-    target: e.fields.end,
-    type: e.reactflow?.type || 'straightEdge',
-    animated: e.reactflow?.animated ?? true,
-    data: {
-      label: labelMap.get(e.pk) ?? '',
-      fields: { ...e.fields },
-      edgetriggercriteria: criteria.find((c: any) => c.fields.edge === e.pk) || null,
-    },
-  }));
+  const edges: JsonEdge[] = edgesRaw.map((e: any) => {
+    const label = labelMap.get(String(e.pk)) ?? '';
+    return {
+      id: e.pk.toString(),
+      source: e.fields.start,
+      target: e.fields.end,
+      type: e.reactflow?.type || 'straightEdge',
+      animated: e.reactflow?.animated ?? true,
+      label,  // ✅ 이 부분이 화면에 직접 보이는 라벨
+      data: {
+        label,
+        fields: { ...e.fields },
+        edgetriggercriteria: criteria.find((c: any) => String(c.fields.edge) === String(e.pk)) || null,
+      },
+    };
+  });
 
   return {
     model: 'questionnairegraph',
