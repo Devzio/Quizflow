@@ -258,17 +258,42 @@ const DnDFlow = () => {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
+  // const saveToJsonFile = (name: string) => {
+  //   const exportdata = ConvertExport(name, nodes, edges);
+  //   SaveJsonFile(name, exportdata)
+  // };
+
+
+
   const saveToJsonFile = (name: string) => {
     // Use the provided questionnaire name from ToolBar
     const exportdata = ConvertExport(name, nodes, edges);
-    SaveJsonFile(name, exportdata)
-  };
+    const data = JSON.stringify(JSON.parse(exportdata), null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
 
+    // Use the provided name for the downloaded file
+    const safeFileName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
+    a.download = `${safeFileName}.json`;
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
   const exportToJsonFile = (name: string) => {
     // Use the provided questionnaire name from ToolBar
     const exportdata = ConvertExportWithReactFlowData(name, nodes, edges);
     SaveJsonFile(name + ".flow", exportdata)
   }
+  const handleOpenCriteriaModal = () => {
+    setShowCriteriaModal(true);
+  };
+
+  const handleCloseCriteriaModal = () => {
+    setShowCriteriaModal(false);
+  };
 
   return (
     <div className="dndflow">
