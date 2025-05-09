@@ -70,9 +70,9 @@ export const initialNodes = [
 //     },
 //     position: { x: 0, y: 400 },
 //   },
-// ];
+];
 
-// export const initialEdges = [
+export const initialEdges = [
 //   {
 //     id: 'e1-2',
 //     type: 'edgedelete',
