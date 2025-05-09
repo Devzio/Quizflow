@@ -7,7 +7,7 @@ interface ToolBarProps {
   setNodes: React.Dispatch<React.SetStateAction<Node[]>> | ((nodes: Node[]) => void);
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>> | ((edges: Edge[]) => void);
   saveToJsonFile?: (name: string) => void;
-  exportToJsonFIle?: (name: string) => void;
+  exportToJsonFile?: (name: string) => void;
   colorMode?: 'light' | 'dark';
   fitView?: () => void; // Add fitView function prop
 }
@@ -18,7 +18,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   setNodes,
   setEdges,
   saveToJsonFile,
-  exportToJsonFIle,
+  exportToJsonFile,
   colorMode = 'light',
   fitView // Destructure the fitView prop
 }) => {
@@ -115,8 +115,8 @@ const ToolBar: React.FC<ToolBarProps> = ({
       saveToJsonFile(questionnaireName);
       toast.success(`Flow saved as ${questionnaireName}.json`);
     }
-    if (saveFn == exportToJsonFIle) {
-      exportToJsonFIle(questionnaireName);
+    if (saveFn == exportToJsonFile) {
+      exportToJsonFile(questionnaireName);
       toast.success(`Flow saved as ${questionnaireName}.flow.json`);
     }
   };
@@ -172,9 +172,9 @@ const ToolBar: React.FC<ToolBarProps> = ({
         </button>
       )}
 
-      {exportToJsonFIle && (
+      {exportToJsonFile && (
         <button
-          onClick={() => handleSaveFlow(exportToJsonFIle)}
+          onClick={() => handleSaveFlow(exportToJsonFile)}
           style={{
             ...buttonStyle,
             backgroundColor: colorMode === 'dark' ? '#1976d2' : '#2196F3',
