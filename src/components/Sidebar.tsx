@@ -46,7 +46,9 @@ export function Sidebar({ colorMode, onOpenCriteriaModal, hasStartNode = false }
       >
         End Node
       </div>
-
+      <p className="info-temp">
+        Right click on a node or edge label to edit its content or delete it.
+      </p>
       <div className="sidebar-buttons">
         <button className="sidebar-button" onClick={onOpenCriteriaModal}>
           Manage Edge Criteria

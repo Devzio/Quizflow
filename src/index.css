@@ -169,6 +169,8 @@ body {
  
 .dndflow .sidebar .description {
   margin-bottom: 15px;
+  color: #888;
+
 }
  
 .dndflow .dndnode {
@@ -572,8 +574,20 @@ body {
 
 
 /* Sidebar Button Styles */
+.sidebar{
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+}
+.info-temp{
+  margin-top: auto;
+  color: #888;
+}
+
 .sidebar-buttons {
-  margin-top: 30px;
+  border-top: 1px solid #bebebe;
+  margin-top: 10px;
+  padding-top: 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
