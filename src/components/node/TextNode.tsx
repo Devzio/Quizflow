@@ -1,8 +1,8 @@
-import { Handle, Position, Node, NodeProps, useReactFlow } from '@xyflow/react';
+import { Handle, Position, Node as FlowNode, NodeProps, useReactFlow } from '@xyflow/react';
 import { Check, Trash2 } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
-type TextNode = Node<{ label: string }, 'text'>;
+type TextNode = FlowNode<{ label: string }, 'text'>;
 
 export function TextNode({ data, id }: NodeProps<TextNode>) {
   const { deleteElements, setNodes } = useReactFlow();
@@ -30,7 +30,7 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
     setNodeLabel(e.target.value);
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
     setNodes((nds) =>
       nds.map((node) => {
@@ -46,7 +46,7 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
         return node;
       })
     );
-  };
+  }, [id, nodeLabel, setNodes]);
 
   // This effect will handle clicks outside the modal
   useEffect(() => {
@@ -55,8 +55,8 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
       if (
         isModalOpen &&
         modalRef.current &&
-        !modalRef.current.contains(event.target as Node) &&
-        !(nodeRef.current && nodeRef.current.contains(event.target as Node))
+        !modalRef.current.contains(event.target as unknown as Node) &&
+        !(nodeRef.current && nodeRef.current.contains(event.target as unknown as Node | null))
       ) {
         handleModalClose();
       }
@@ -75,7 +75,7 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, handleModalClose]);
 
   return (
     <div

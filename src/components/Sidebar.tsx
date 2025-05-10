@@ -39,6 +39,14 @@ export function Sidebar({ colorMode, onOpenCriteriaModal, hasStartNode = false }
         Question Node
       </div>
 
+      {/* <div
+        className="dndnode input"
+        onDragStart={(event) => onDragStart(event, 'text')}
+        draggable
+      >
+        Input Node
+      </div> */}
+
       <div
         className="dndnode end"
         onDragStart={(event) => onDragStart(event, 'end')}

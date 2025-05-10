@@ -39,6 +39,7 @@ export default function CustomEdge({
   const [criteriaOptions, setCriteriaOptions] = useState<EdgeCriterion[]>([]);
   // const [currentInput, setCurrentInput] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); // Add reference for the input field
 
   // Function to refresh criteria options
   const refreshCriteriaOptions = useCallback(() => {
@@ -158,6 +159,14 @@ export default function CustomEdge({
     }
   }, [isModalOpen, refreshCriteriaOptions]);
 
+  // Add effect to focus and select text in input when modal opens
+  useEffect(() => {
+    if (isModalOpen && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isModalOpen]);
+
   return (
     <>
       <BaseEdge
@@ -186,6 +195,7 @@ export default function CustomEdge({
               value={edgeLabel}
               onChange={handleLabelChange}
               placeholder="Edge label"
+              ref={inputRef} // Attach the input reference
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleModalClose();
