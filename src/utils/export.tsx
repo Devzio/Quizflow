@@ -19,10 +19,10 @@ enum Model {
   QuestionTag = "questionnaire.questiontag"
 }
 
-export function ConvertExport(questionnareName: string, nodes: Node[], edges: Edge[]): string { 
+export function ConvertExport(questionnareName: string, nodes: Node[], edges: Edge[]): string {
   return convertExport(questionnareName, nodes, edges, false);
 }
-export function ConvertExportWithReactFlowData(questionnareName: string, nodes: Node[], edges: Edge[]): string { 
+export function ConvertExportWithReactFlowData(questionnareName: string, nodes: Node[], edges: Edge[]): string {
   return convertExport(questionnareName, nodes, edges, true);
 }
 
@@ -58,8 +58,8 @@ function convertExport(questionnareName: string, nodes: Node[], edges: Edge[], i
   const edgeList: (ModelEdge | ModelEdgeTriggerCriteria)[] = [];
   edges.forEach((e: Edge) => {
     const ret = convertEdge(includeFlowData, e)
-    if (ret._edgeTC) {
-      edgeList.push(ret._edgeTC);
+    if (ret._edgeTC && ret._edgeTC.length > 0) {
+      edgeList.push(...ret._edgeTC);
     }
 
     edgeList.push(ret._edge);
@@ -147,10 +147,10 @@ function convertQuestion(node: Node) {
   }
 
   // add question tag 
-  const tag_choices = (data as {tag_choices: string[]}).tag_choices;
+  const tag_choices = (data as { tag_choices: string[] }).tag_choices;
   const _questionTags: ModelQuestionTag[] = [];
   if (tag_choices && tag_choices.length > 0) {
-    let qt:ModelQuestionTag;
+    let qt: ModelQuestionTag;
     tag_choices.forEach(tag => {
       qt = {
         model: Model.QuestionTag,
@@ -170,15 +170,15 @@ function convertQuestion(node: Node) {
     _question.fields.type = "dead_end"
   }
 
-  return { _question,  _questionTags};
+  return { _question, _questionTags };
 }
 
 
 /**
- * A funciton for an edge conversion.
+ * A function for an edge conversion.
  *
  * @param edge - a Edge object
- * @returns a ModelEdge object and optionally a ModelEdgeTriggerCriteria object 
+ * @returns a ModelEdge object and optionally an array of ModelEdgeTriggerCriteria objects 
  */
 function convertEdge(includeFlowData: boolean, edge: Edge) {
 
@@ -196,51 +196,84 @@ function convertEdge(includeFlowData: boolean, edge: Edge) {
     _edge.fields = { ...edge.data?.fields, ..._edge.fields }
   }
 
-  let _edgeTC = null;
+  let _edgeTC: ModelEdgeTriggerCriteria[] = [];
 
-  if (edge.data?.label) {
+  if (edge.data?.label || edge.data?.selectedCriteria) {
     _edgeTC = convertEdgeTriggerCriteria(edge);
   }
 
-   // add reactflow data 
-   if (includeFlowData) {
+  // add reactflow data 
+  if (includeFlowData) {
     _edge.reactflow = {
       animated: edge.animated,
       type: edge.type,
     } as ReactFlowEdge;
   }
-  
-  return { _edge, _edgeTC: _edgeTC ?? null };
+
+  return { _edge, _edgeTC };
 };
 
 
 /**
- * A funciton for an edgeTriggerCriteria conversion.
+ * A function for an edgeTriggerCriteria conversion.
  *
- * @param nodes - a Edge object
- * @returns a ModelEdgeTriggerCriteria object 
+ * @param edge - a Edge object
+ * @returns an array of ModelEdgeTriggerCriteria objects 
  */
-const convertEdgeTriggerCriteria = (edge: Edge,) => {
+const convertEdgeTriggerCriteria = (edge: Edge) => {
+  const selectedCriteria = edge.data?.selectedCriteria as EdgeCriterion[];
+  const edgetriggercriteria = edge.data?.edgetriggercriteria as ModelEdgeTriggerCriteria;
+  const result: ModelEdgeTriggerCriteria[] = [];
 
-  const edgetriggercriteria = edge.data?.edgetriggercriteria as ModelEdgeTriggerCriteria
+  // If we have the new format with multiple selected criteria
+  if (Array.isArray(selectedCriteria) && selectedCriteria.length > 0) {
+    // Create a criteria object for each selected criterion
+    selectedCriteria.forEach((criterion) => {
+      const _edgeTC: ModelEdgeTriggerCriteria = {
+        model: Model.EdgetriggerCriteria,
+        pk: GenerateRandomPk(),
+        fields: {
+          edge: edge.id,
+          choice: criterion.label || "",
+          value: criterion.value || "",
+          criterionId: criterion.id || "",
+        } as ModelEdgeTriggerCriteriaFields
+      };
+      result.push(_edgeTC);
+    });
 
-  let _edgeTC: ModelEdgeTriggerCriteria;
-  if (edgetriggercriteria) {
-    // pass down
-    _edgeTC = { ...edgetriggercriteria }
-  } else {
-    _edgeTC = {
+    return result;
+  }
+  // Fallback to single criterion logic for backward compatibility
+  else if (edgetriggercriteria) {
+    // pass down all existing criteria data
+    const _edgeTC = { ...edgetriggercriteria };
+
+    // Ensure the edge ID is correctly linked
+    _edgeTC.fields.edge = edge.id;
+
+    // Make sure choice is updated if it changed in the UI
+    if (edge.data?.label && edge.data.label !== _edgeTC.fields.choice) {
+      _edgeTC.fields.choice = edge.data.label.toString();
+    }
+
+    result.push(_edgeTC);
+    return result;
+  }
+  // Create a new edge criteria based on the label if nothing else is available
+  else if (edge.data?.label) {
+    const _edgeTC: ModelEdgeTriggerCriteria = {
       model: Model.EdgetriggerCriteria,
       pk: GenerateRandomPk(),
       fields: {
         edge: edge.id,
+        choice: edge.data?.label ? edge.data.label.toString() : "",
       } as ModelEdgeTriggerCriteriaFields
-    }
+    };
+
+    result.push(_edgeTC);
+    return result;
   }
 
-  // update choice 
-  // ReactFlow edge's "label" is the same as "choice" in edgetriggercriteria model
-  _edgeTC.fields.choice = edge.data?.label ? edge.data?.label.toString() : "";
-
-  return _edgeTC
+  return result;
 }

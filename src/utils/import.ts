@@ -12,6 +12,27 @@ type JsonNode = {
   };
 };
 
+// Type for edge criterion in selectedCriteria array
+type EdgeCriterion = {
+  id: string;
+  value: string;
+  label: string;
+};
+
+// Type for edge trigger criteria data structure
+type EdgeTriggerCriteria = {
+  model: string;
+  pk: string | number;
+  fields: {
+    edge: string | number;
+    choice?: string;
+    value?: string;
+    criterionId?: string;
+    [key: string]: unknown;
+  };
+};
+
+// Type for JsonEdge with improved typing for edgetriggercriteria
 type JsonEdge = {
   id: string;
   source: string;
@@ -21,8 +42,9 @@ type JsonEdge = {
   label?: string;
   data: {
     label: string;
-    fields?: any;
-    edgetriggercriteria?: any;
+    fields?: Record<string, unknown>;
+    edgetriggercriteria?: EdgeTriggerCriteria | null;
+    selectedCriteria?: EdgeCriterion[];
   };
 };
 
@@ -148,18 +170,33 @@ export function convertJson(input: any): JsonJson {
   });
 
   const edges: JsonEdge[] = edgesRaw.map((e: any) => {
-    const label = labelMap.get(String(e.pk)) ?? '';
+    // Find all matching edge trigger criteria for this edge (there could be multiple for multi-select)
+    const edgeCriteriaList = criteria.filter((c: any) => String(c.fields.edge) === String(e.pk));
+    
+    // Use the first criteria's choice as the main label for backward compatibility
+    const label = edgeCriteriaList[0]?.fields.choice ?? labelMap.get(String(e.pk)) ?? '';
+    
+    // Create selectedCriteria array from the criteria objects
+    const selectedCriteria: EdgeCriterion[] = edgeCriteriaList.map(c => ({
+      id: c.fields.criterionId || c.pk.toString(),
+      value: c.fields.value || c.fields.choice || '',
+      label: c.fields.choice || ''
+    }));
+    
     return {
       id: e.pk.toString(),
       source: e.fields.start,
       target: e.fields.end,
       type: e.reactflow?.type || 'straightEdge',
       animated: e.reactflow?.animated ?? true,
-      label,  // ✅ 이 부분이 화면에 직접 보이는 라벨
+      label,  // ✅ This is the label visible on the edge
       data: {
-        label,
+        label,  // Ensure the label is duplicated in the data for consistency
         fields: { ...e.fields },
-        edgetriggercriteria: criteria.find((c: any) => String(c.fields.edge) === String(e.pk)) || null,
+        // Store the first edge trigger criteria object for backward compatibility
+        edgetriggercriteria: edgeCriteriaList[0] || null,
+        // Store the array of selected criteria
+        selectedCriteria: selectedCriteria.length > 0 ? selectedCriteria : undefined,
       },
     };
   });
