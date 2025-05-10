@@ -113,11 +113,11 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
     if (saveFn == saveToJsonFile) {
       saveToJsonFile(questionnaireName);
-      toast.success(`Flow saved as ${questionnaireName}.json`);
+      toast.success(`Flow saved as ${questionnaireName}_flow.json`);
     }
     if (saveFn == exportToJsonFile) {
       exportToJsonFile(questionnaireName);
-      toast.success(`Flow saved as ${questionnaireName}.flow.json`);
+      toast.success(`Flow saved as ${questionnaireName}.json`);
     }
   };
 
