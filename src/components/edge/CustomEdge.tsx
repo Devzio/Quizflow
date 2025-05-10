@@ -1,7 +1,7 @@
 import { BaseEdge, EdgeProps, EdgeText, getBezierPath } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
 import { Check, Trash2, X } from 'lucide-react';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react';
 import { getAllCriteria, EdgeCriterion, addChangeListener, removeChangeListener } from '../../utils/edgeCriteriaService';
 
 export default function CustomEdge({
@@ -37,9 +37,9 @@ export default function CustomEdge({
     Array.isArray(data?.selectedCriteria) ? data.selectedCriteria : []
   );
   const [criteriaOptions, setCriteriaOptions] = useState<EdgeCriterion[]>([]);
-  // const [currentInput, setCurrentInput] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null); // Add reference for the input field
+  const pillContainerRef = useRef<HTMLDivElement>(null); // Add reference for the pill container
 
   // Function to refresh criteria options
   const refreshCriteriaOptions = useCallback(() => {
@@ -167,6 +167,30 @@ export default function CustomEdge({
     }
   }, [isModalOpen]);
 
+  // Adjust modal position based on pill container height
+  const [modalYOffset, setModalYOffset] = useState(0);
+  useLayoutEffect(() => {
+    if (isModalOpen && pillContainerRef.current) {
+      setTimeout(() => {
+        if (pillContainerRef.current) {
+          const pillContainerHeight = pillContainerRef.current.getBoundingClientRect().height;
+          const baseHeight = 19.5; // Baseline height for single line of pills
+
+          // Only apply offset when height significantly increases (more than 8px)
+          if (pillContainerHeight > baseHeight + 8) {
+            // Calculate additional height but apply a dampening factor to make movement more subtle
+            const additionalHeight = Math.max(0, pillContainerHeight - baseHeight);
+            const dampedOffset = Math.floor(additionalHeight * 0.55); // Use 50% of the actual height increase
+            console.log('Pill container height:', pillContainerHeight, 'Base height:', baseHeight, 'Adjusted offset:', dampedOffset);
+            setModalYOffset(dampedOffset);
+          } else {
+            setModalYOffset(0);
+          }
+        }
+      }, 0);
+    }
+  }, [isModalOpen, selectedCriteria]); // React to any changes in selectedCriteria
+
   return (
     <>
       <BaseEdge
@@ -184,9 +208,9 @@ export default function CustomEdge({
       {isModalOpen && (
         <foreignObject
           width="300"
-          height={200} // Increased height to accommodate pills
-          x={labelX - 100}
-          y={labelY - 100}
+          height={200 + modalYOffset} // Adjusted height based on pills
+          x={labelX - 90}
+          y={labelY - 105 - modalYOffset} // Move modal down by the full amount of extra height
           className="edge-modal"
         >
           <div className="modal-content_edge" ref={modalRef}>
@@ -204,7 +228,7 @@ export default function CustomEdge({
             />
 
             {selectedCriteria.length > 0 && (
-              <div className="pill-container">
+              <div className="pill-container" ref={pillContainerRef}>
                 {selectedCriteria.map((criterion) => (
                   <div key={criterion.id} className="criterion-pill">
                     <span>{criterion.label}</span>
