@@ -32,10 +32,12 @@ export default function EdgeWithDeleteButton({
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [edgeLabel, setEdgeLabel] = useState(data?.label || '');
-  const [selectedCriteria, setSelectedCriteria] = useState<EdgeCriterion[]>(data?.selectedCriteria || []);
+  const [edgeLabel, setEdgeLabel] = useState<string>(typeof data?.label === 'string' ? data.label : '');
+  const [selectedCriteria, setSelectedCriteria] = useState<EdgeCriterion[]>(
+    Array.isArray(data?.selectedCriteria) ? data.selectedCriteria : []
+  );
   const [criteriaOptions, setCriteriaOptions] = useState<EdgeCriterion[]>([]);
-  const [currentInput, setCurrentInput] = useState('');
+  // const [currentInput, setCurrentInput] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Function to refresh criteria options
@@ -60,7 +62,7 @@ export default function EdgeWithDeleteButton({
   // Initialize selected criteria from data when mounting or when data changes
   useEffect(() => {
     if (data?.selectedCriteria) {
-      setSelectedCriteria(data.selectedCriteria);
+      setSelectedCriteria(Array.isArray(data.selectedCriteria) ? data.selectedCriteria : []);
     } else if (data?.edgeCriteria) {
       // For backward compatibility with the old single-criteria format
       const criterion = criteriaOptions.find(c => c.value === data.edgeCriteria);
@@ -73,7 +75,9 @@ export default function EdgeWithDeleteButton({
   // Sync edge label with data.label whenever it changes
   useEffect(() => {
     if (data?.label) {
-      setEdgeLabel(data.label);
+      if (typeof data.label === 'string') {
+        setEdgeLabel(data.label);
+      }
     }
   }, [data?.label]);
 
@@ -109,7 +113,7 @@ export default function EdgeWithDeleteButton({
     setSelectedCriteria(selectedCriteria.filter(c => c.value !== criterionValue));
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     // Update the edge data with the new label and all selected criteria
     setEdges(edges =>
       edges.map(edge =>
@@ -129,7 +133,7 @@ export default function EdgeWithDeleteButton({
     );
 
     setIsModalOpen(false);
-  };
+  }, [id, edgeLabel, selectedCriteria, setEdges]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -145,7 +149,7 @@ export default function EdgeWithDeleteButton({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isModalOpen, edgeLabel, selectedCriteria]);
+  }, [isModalOpen, edgeLabel, selectedCriteria, handleModalClose]);
 
   // Additional effect to refresh criteria options when modal is opened
   useEffect(() => {

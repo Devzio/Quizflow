@@ -295,9 +295,10 @@ body {
 
 }
 
+
 .modal-content_edge{
   position: absolute;
-  z-index: 100;
+  z-index: 1000 !important; 
   background-color: #fff;
   border: 1px solid #999;
   border-radius: 5px;
