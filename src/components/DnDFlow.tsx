@@ -8,7 +8,7 @@ import { InputNode } from './node/InputNode';
 import { TextNode } from './node/TextNode';
 import { StartNode } from './node/StartNode';
 import StraightEdge from './edge/StraightEdge';
-import EdgeWithDeleteButton from './edge/EdgeWithDeleteButton';
+import CustomEdge from './edge/CustomEdge';
 import { Moon, Sun, Undo, Redo } from "lucide-react";
 import { Sidebar } from './Sidebar';
 import { useDnD } from './DnDContext';
@@ -28,7 +28,7 @@ const nodeTypes: NodeTypes = {
 
 const edgeTypes: EdgeTypes = {
   'straightEdge': StraightEdge,
-  'edgedelete': EdgeWithDeleteButton
+  'edgecustom': CustomEdge
 };
 
 // Define more specific node type for our app
@@ -129,7 +129,7 @@ const DnDFlow = () => {
             ...params,
             id: GenerateRandomPk().toString(),
             animated: true,
-            type: "edgedelete",
+            type: "edgecustom",
           },
           prevEdges
         ) as typeof prevEdges;
