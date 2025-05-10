@@ -198,7 +198,7 @@ function convertEdge(includeFlowData: boolean, edge: Edge) {
 
   let _edgeTC: ModelEdgeTriggerCriteria[] = [];
 
-  if (edge.data?.label || edge.data?.selectedCriteria) {
+  if (edge.data?.selectedCriteria) {
     _edgeTC = convertEdgeTriggerCriteria(edge);
   }
 
@@ -207,6 +207,7 @@ function convertEdge(includeFlowData: boolean, edge: Edge) {
     _edge.reactflow = {
       animated: edge.animated,
       type: edge.type,
+      label: edge.label || edge.data?.label || '', // Preserve edge label in reactflow data
     } as ReactFlowEdge;
   }
 
@@ -252,28 +253,17 @@ const convertEdgeTriggerCriteria = (edge: Edge) => {
     // Ensure the edge ID is correctly linked
     _edgeTC.fields.edge = edge.id;
 
-    // Make sure choice is updated if it changed in the UI
-    if (edge.data?.label && edge.data.label !== _edgeTC.fields.choice) {
+    // Only update the choice if it's a criterion, not just an edge label
+    if (edge.data?.selectedCriteria && edge.data?.label !== _edgeTC.fields.choice) {
       _edgeTC.fields.choice = edge.data.label.toString();
     }
 
     result.push(_edgeTC);
     return result;
   }
-  // Create a new edge criteria based on the label if nothing else is available
-  else if (edge.data?.label) {
-    const _edgeTC: ModelEdgeTriggerCriteria = {
-      model: Model.EdgetriggerCriteria,
-      pk: GenerateRandomPk(),
-      fields: {
-        edge: edge.id,
-        choice: edge.data?.label ? edge.data.label.toString() : "",
-      } as ModelEdgeTriggerCriteriaFields
-    };
 
-    result.push(_edgeTC);
-    return result;
-  }
+  // DO NOT automatically create edge criteria from labels
+  // This was causing edge labels to be converted to criteria on import
 
   return result;
 }

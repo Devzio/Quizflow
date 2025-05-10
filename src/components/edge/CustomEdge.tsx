@@ -62,8 +62,9 @@ export default function CustomEdge({
 
   // Initialize selected criteria from data when mounting or when data changes
   useEffect(() => {
-    if (data?.selectedCriteria) {
-      setSelectedCriteria(Array.isArray(data.selectedCriteria) ? data.selectedCriteria : []);
+    // Only use selectedCriteria if it's explicitly defined - don't auto-create from label
+    if (data?.selectedCriteria && Array.isArray(data.selectedCriteria)) {
+      setSelectedCriteria(data.selectedCriteria);
     } else if (data?.edgeCriteria) {
       // For backward compatibility with the old single-criteria format
       const criterion = criteriaOptions.find(c => c.value === data.edgeCriteria);
@@ -74,11 +75,10 @@ export default function CustomEdge({
   }, [data?.selectedCriteria, data?.edgeCriteria, criteriaOptions]);
 
   // Sync edge label with data.label whenever it changes
+  // Important: This ensures we keep the user-defined label during import
   useEffect(() => {
-    if (data?.label) {
-      if (typeof data.label === 'string') {
-        setEdgeLabel(data.label);
-      }
+    if (data?.label && typeof data.label === 'string') {
+      setEdgeLabel(data.label);
     }
   }, [data?.label]);
 
@@ -100,11 +100,6 @@ export default function CustomEdge({
       const newSelectedCriteria = [...selectedCriteria, selectedCriterion];
       setSelectedCriteria(newSelectedCriteria);
 
-      // Update the edge label to be a combination of all selected criteria
-      if (newSelectedCriteria.length === 1) {
-        setEdgeLabel(selectedCriterion.label);
-      }
-
       // Reset the select dropdown
       e.target.value = '';
     }
@@ -121,6 +116,7 @@ export default function CustomEdge({
         edge.id === id
           ? {
             ...edge,
+            label: edgeLabel, // Set the label at the top level too
             data: {
               ...edge.data,
               label: edgeLabel,
