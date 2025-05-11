@@ -25,7 +25,7 @@ export default function CustomEdge({
     targetPosition,
   });
 
-  const { deleteElements, setEdges } = useReactFlow();
+  const { deleteElements, setEdges, getZoom } = useReactFlow();
 
   const deleteEdge = () => {
     deleteElements({ edges: [{ id }] });
@@ -163,29 +163,50 @@ export default function CustomEdge({
     }
   }, [isModalOpen]);
 
-  // Adjust modal position based on pill container height
+  // Adjust modal position based on pill container height and zoom level
   const [modalYOffset, setModalYOffset] = useState(0);
   useLayoutEffect(() => {
     if (isModalOpen && pillContainerRef.current) {
       setTimeout(() => {
         if (pillContainerRef.current) {
+          const zoom = getZoom();
+
           const pillContainerHeight = pillContainerRef.current.getBoundingClientRect().height;
           const baseHeight = 19.5; // Baseline height for single line of pills
 
           // Only apply offset when height significantly increases (more than 8px)
           if (pillContainerHeight > baseHeight + 8) {
-            // Calculate additional height but apply a dampening factor to make movement more subtle
+            // Calculate additional height with a zoom-sensitive factor
             const additionalHeight = Math.max(0, pillContainerHeight - baseHeight);
-            const dampedOffset = Math.floor(additionalHeight * 0.55); // Use 50% of the actual height increase
-            console.log('Pill container height:', pillContainerHeight, 'Base height:', baseHeight, 'Adjusted offset:', dampedOffset);
+
+            // Apply a non-linear zoom compensation that increases dramatically at lower zoom levels
+            // This gives better results across the entire zoom range (0.5 to 2.0)
+            let zoomFactor;
+            if (zoom >= 1) {
+              // When zoomed in (1.0+), use more moderate scaling
+              zoomFactor = 1.2 / zoom;
+            } else {
+              // When zoomed out (<1.0), use more aggressive scaling
+              // The 1/zoom² creates a stronger effect at lower zoom levels
+              zoomFactor = 1.2 * (1 / (zoom * zoom));
+            }
+
+            // Calculate the final offset with the dynamic zoom factor
+            const dampedOffset = Math.floor(additionalHeight * zoomFactor);
+
+            console.log('Pill container height:', pillContainerHeight, 'Base height:', baseHeight,
+              'Zoom:', zoom, 'Zoom factor:', zoomFactor, 'Adjusted offset:', dampedOffset);
             setModalYOffset(dampedOffset);
           } else {
-            setModalYOffset(0);
+            // Add a minimum offset based on zoom level to ensure there's always some space
+            // This ensures the modal never sits right on the edge label, even with no pills
+            const minOffset = zoom < 1 ? Math.floor(15 / zoom) : 15;
+            setModalYOffset(minOffset);
           }
         }
       }, 0);
     }
-  }, [isModalOpen, selectedCriteria]); // React to any changes in selectedCriteria
+  }, [isModalOpen, selectedCriteria, getZoom]); // React to any changes in selectedCriteria or zoom level
 
   return (
     <>
