@@ -5,13 +5,41 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 type TextNode = FlowNode<{ label: string }, 'text'>;
 
 export function TextNode({ data, id }: NodeProps<TextNode>) {
-  const { deleteElements, setNodes } = useReactFlow();
+  const { deleteElements, setNodes, setEdges, getEdges } = useReactFlow();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nodeLabel, setNodeLabel] = useState(data.label);
   const modalRef = useRef<HTMLDivElement>(null);
   const nodeRef = useRef<HTMLDivElement>(null);
 
   const onDelete = () => {
+    const allEdges = getEdges();
+
+    // 1. Find all edges connected to this node
+    const incoming = allEdges.filter(e => e.target === id);
+    const outgoing = allEdges.filter(e => e.source === id);
+
+    // 2.  Keep only the edges that are not connected to this node
+    const remainingEdges = allEdges.filter(e => e.source !== id && e.target !== id);
+
+    // 3. Automatically reconnect parent → child edges
+    const reconnected = incoming.flatMap(parent =>
+      outgoing.map(child => ({
+        id: `auto-${parent.source}-${child.target}`,
+        source: parent.source,
+        target: child.target,
+        type: 'edgecustom', // ✅ use a registered custom edge type
+        animated: true,
+        data: {
+          label: '(auto reconnected)',
+          selectedCriteria: [], // ✅ default value to ensure mordal works correctly
+        },
+      }))
+    );
+
+    // 4. edge list update
+    setEdges([...remainingEdges, ...reconnected]);
+
+    // 5. delete the selection node
     deleteElements({ nodes: [{ id }] });
   };
 
@@ -48,23 +76,19 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
     );
   }, [id, nodeLabel, setNodes]);
 
-  // This effect will handle clicks outside the modal
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      // Only close if clicking outside both modal and node
       if (
         isModalOpen &&
         modalRef.current &&
-        !modalRef.current.contains(event.target as unknown as Node) &&
-        !(nodeRef.current && nodeRef.current.contains(event.target as unknown as Node | null))
+        !modalRef.current.contains(event.target as Node) &&
+        !(nodeRef.current && nodeRef.current.contains(event.target as Node))
       ) {
         handleModalClose();
       }
     }
 
-    // Only add the event listener when the modal is open
     if (isModalOpen) {
-      // Add event listeners for both mousedown (right-click) and click (left-click) events
       setTimeout(() => {
         document.addEventListener('mousedown', handleClickOutside);
         document.addEventListener('click', handleClickOutside);
@@ -97,11 +121,7 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
           y={-40}
           className="node-modal"
         >
-          <div
-            className="modal-content_node"
-            ref={modalRef}
-
-          >
+          <div className="modal-content_node" ref={modalRef}>
             <input
               type="text"
               value={nodeLabel}
@@ -120,9 +140,7 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
               <button onClick={onDelete} className='btn-deleteEdge nodrag'>
                 <Trash2 className="remove_svg_style" size={12} />
               </button>
-              <button
-                onClick={handleModalClose} className='btn-confirmEdge nodrag'
-              >
+              <button onClick={handleModalClose} className='btn-confirmEdge nodrag'>
                 <Check className="remove_svg_style" size={14} />
               </button>
             </div>
@@ -134,4 +152,3 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
     </div>
   );
 }
-

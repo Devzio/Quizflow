@@ -9,7 +9,7 @@ interface ToolBarProps {
   saveToJsonFile?: (name: string) => void;
   exportToJsonFile?: (name: string) => void;
   colorMode?: 'light' | 'dark';
-  fitView?: () => void; // Add fitView function prop
+  fitView?: () => void;
 }
 
 type SaveFunction = (name: string) => void;
@@ -20,7 +20,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   saveToJsonFile,
   exportToJsonFile,
   colorMode = 'light',
-  fitView // Destructure the fitView prop
+  fitView
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [questionnaireName, setQuestionnaireName] = useState<string>("");
@@ -29,13 +29,9 @@ const ToolBar: React.FC<ToolBarProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Store the original questionnaire name to restore it in case of an error
     const originalName = questionnaireName;
-
-    // Store the file name to use in success message
     const fileName = file.name;
 
-    // Extract filename without extension to use as questionnaire name
     if (file.name && file.name.endsWith('.json')) {
       const nameWithoutExtension = file.name.substring(0, file.name.length - 5);
       if (nameWithoutExtension) {
@@ -48,25 +44,26 @@ const ToolBar: React.FC<ToolBarProps> = ({
       try {
         const raw = JSON.parse(event.target?.result as string);
         const converted = convertJson(raw);
-        console.log('✅ node:', converted.nodes);
-        console.log('✅ edge:', converted.edges);
-        console.log('✅ graph:', {
-          model: converted.model,
-          pk: converted.pk,
-          ...converted.fields
-        });
+
+        // ✅ Begin patch: enforce edge type and default selectedCriteria
+        const convertedEdgesWithType = converted.edges.map(e => ({
+          ...e,
+          type: 'edgecustom', // ✅ Force edge type to 'edgecustom'
+          data: {
+            ...e.data,
+            selectedCriteria: (e.data as any)?.selectedCriteria ?? [], // ✅ Ensure default selectedCriteria value
+          },
+        }));
 
         setNodes(converted.nodes);
-        setEdges(converted.edges);
+        setEdges(convertedEdgesWithType); // ✅ Use patched edge data
 
-        // Trigger fitView after setting nodes and edges
         if (fitView) {
-          setTimeout(() => fitView(), 100); // Small delay to ensure nodes are rendered
+          setTimeout(() => fitView(), 100);
         }
 
         toast.success(`Flow "${fileName}" successfully opened`);
       } catch (err) {
-        // Restore the original questionnaire name on error
         setQuestionnaireName(originalName);
         toast.error("Error opening flow");
         console.error(err);
@@ -74,8 +71,6 @@ const ToolBar: React.FC<ToolBarProps> = ({
     };
 
     reader.readAsText(file);
-
-    // Reset the file input so the same file can be selected again
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -105,7 +100,6 @@ const ToolBar: React.FC<ToolBarProps> = ({
   };
 
   const handleSaveFlow = (saveFn: SaveFunction) => {
-    // Validate that the questionnaire name is not empty
     if (!questionnaireName || questionnaireName.trim() === "") {
       toast.error("Please set a flow name before saving");
       return;
@@ -135,7 +129,9 @@ const ToolBar: React.FC<ToolBarProps> = ({
         alignItems: 'center',
       }}
     >
-      <span className={`${colorMode === 'dark' ? 'dark' : ''}`} style={{ fontWeight: 'bold', color: colorMode === 'dark' ? '#fff' : '#222', }}>Flow Name:</span>
+      <span style={{ fontWeight: 'bold', color: colorMode === 'dark' ? '#fff' : '#222' }}>
+        Flow Name:
+      </span>
       <input
         type="text"
         placeholder="Enter flow name..."
@@ -183,7 +179,6 @@ const ToolBar: React.FC<ToolBarProps> = ({
           Export Flow
         </button>
       )}
-
     </div>
   );
 };
