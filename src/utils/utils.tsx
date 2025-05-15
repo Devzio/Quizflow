@@ -14,8 +14,7 @@ export function SaveJsonFile(filename :string, jsonString: string) {
     a.href = url;
 
     // Use the provided name for the downloaded file
-    const safeFileName = filename.replace(/[^a-zA-Z0-9_-]/g, '_');
-    a.download = `${safeFileName}.json`;
+    a.download = `${filename}.json`;
 
     document.body.appendChild(a);
     a.click();
