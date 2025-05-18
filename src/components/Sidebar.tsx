@@ -3,10 +3,11 @@ import { useDnD } from './DnDContext';
 interface SidebarProps {
   colorMode: string;
   onOpenCriteriaModal: () => void;
+  onOpenNodeCriteriaModal?: () => void;
   hasStartNode?: boolean;
 }
 
-export function Sidebar({ colorMode, onOpenCriteriaModal, hasStartNode = false }: SidebarProps) {
+export function Sidebar({ colorMode, onOpenCriteriaModal, onOpenNodeCriteriaModal, hasStartNode = false }: SidebarProps) {
   const [, setType] = useDnD();
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
@@ -56,11 +57,15 @@ export function Sidebar({ colorMode, onOpenCriteriaModal, hasStartNode = false }
       </div>
       <p className="info-temp">
         Right click on a node or edge label to edit its content or delete it.
-      </p>
-      <div className="sidebar-buttons">
+      </p>      <div className="sidebar-buttons">
         <button className="sidebar-button" onClick={onOpenCriteriaModal}>
           Manage Edge Criteria
         </button>
+        {onOpenNodeCriteriaModal && (
+          <button className="sidebar-button" onClick={onOpenNodeCriteriaModal}>
+            Manage Node Criteria
+          </button>
+        )}
       </div>
     </div>
   );

@@ -1,0 +1,132 @@
+[
+  {
+    "id": "1",
+    "value": "address",
+    "label": "Address"
+  },
+  {
+    "id": "17",
+    "value": "observation_alcohol",
+    "label": "Alcohol Consumption"
+  },
+  {
+    "id": "2",
+    "value": "allergies",
+    "label": "Allergies"
+  },
+  {
+    "id": "18",
+    "value": "observation_bp",
+    "label": "Blood pressure"
+  },
+  {
+    "id": "3",
+    "value": "currently_on_pill",
+    "label": "Currently on pill"
+  },
+  {
+    "id": "4",
+    "value": "demographic_dob",
+    "label": "Date of Birth"
+  },
+  {
+    "id": "7",
+    "value": "dva",
+    "label": "Department of Veterans' Affairs Number"
+  },
+  {
+    "id": "8",
+    "value": "email",
+    "label": "Email"
+  },
+  {
+    "id": "9",
+    "value": "eScript_only",
+    "label": "eScript only"
+  },
+  {
+    "id": "10",
+    "value": "ethnicity",
+    "label": "ethnicity"
+  },
+  {
+    "id": "11",
+    "value": "family_history",
+    "label": "Family History"
+  },
+  {
+    "id": "5",
+    "value": "demographic_full_name",
+    "label": "Full Name"
+  },
+  {
+    "id": "6",
+    "value": "demographic_gender",
+    "label": "Gender"
+  },
+  {
+    "id": "19",
+    "value": "observation_height",
+    "label": "Height"
+  },
+  {
+    "id": "12",
+    "value": "medical_history",
+    "label": "Medical History"
+  },
+  {
+    "id": "13",
+    "value": "medicare",
+    "label": "Medicare"
+  },
+  {
+    "id": "14",
+    "value": "medication",
+    "label": "Medication"
+  },
+  {
+    "id": "15",
+    "value": "mobile",
+    "label": "Mobile"
+  },
+  {
+    "id": "16",
+    "value": "nib_membership_number",
+    "label": "NIB Membership Number"
+  },
+  {
+    "id": "23",
+    "value": "payment",
+    "label": "Payment"
+  },
+  {
+    "id": "24",
+    "value": "preferred_product",
+    "label": "Preferred product"
+  },
+  {
+    "id": "25",
+    "value": "previously_on_pill",
+    "label": "Previously on pill"
+  },
+  {
+    "id": "26",
+    "value": "recently_on_medication",
+    "label": "Recently on medication"
+  },
+  {
+    "id": "20",
+    "value": "observation_smoking",
+    "label": "Smoking Status"
+  },
+  {
+    "id": "21",
+    "value": "observation_waist",
+    "label": "Waist Measurement"
+  },
+  {
+    "id": "22",
+    "value": "observation_weight",
+    "label": "Weight"
+  }
+]

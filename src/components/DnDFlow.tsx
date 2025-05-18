@@ -17,6 +17,7 @@ import React, { ReactNode } from 'react';
 import { ConvertExport, ConvertExportWithReactFlowData } from '../utils/export'
 import { GenerateRandomPk, SaveJsonFile } from '../utils/utils';
 import EdgeCriteriaModal from './EdgeCriteriaModal';
+import NodeCriteriaModal from './NodeCriteriaModal';
 
 // Define custom node and edge types
 const nodeTypes: NodeTypes = {
@@ -47,10 +48,10 @@ type CustomEdge = Edge & {
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
-  const [history, setHistory] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light'); const [history, setHistory] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [future, setFuture] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [showCriteriaModal, setShowCriteriaModal] = useState(false);
+  const [showNodeCriteriaModal, setShowNodeCriteriaModal] = useState(false);
   const reactFlowInstance = useReactFlow();
 
   const [nodes, setNodes] = useNodesState<Node>(initialNodes);
@@ -283,6 +284,14 @@ const DnDFlow = () => {
     setShowCriteriaModal(false);
   };
 
+  const handleOpenNodeCriteriaModal = useCallback(() => {
+    setShowNodeCriteriaModal(true);
+  }, []);
+
+  const handleCloseNodeCriteriaModal = useCallback(() => {
+    setShowNodeCriteriaModal(false);
+  }, []);
+
   return (
     <div className="dndflow">
       <div className='reactflow-layout'>
@@ -338,14 +347,24 @@ const DnDFlow = () => {
               </button>
             </Controls>
           </ReactFlow>
-        </div>
-      </div>
-      <Sidebar colorMode={colorMode} onOpenCriteriaModal={handleOpenCriteriaModal} hasStartNode={hasStartNode} />
+        </div>      </div>
+      <Sidebar
+        colorMode={colorMode}
+        onOpenCriteriaModal={handleOpenCriteriaModal}
+        onOpenNodeCriteriaModal={handleOpenNodeCriteriaModal}
+        hasStartNode={hasStartNode}
+      />
 
       {/* Edge Criteria Modal */}
       <EdgeCriteriaModal
         isOpen={showCriteriaModal}
         onClose={handleCloseCriteriaModal}
+      />
+
+      {/* Node Criteria Modal */}
+      <NodeCriteriaModal
+        isOpen={showNodeCriteriaModal}
+        onClose={handleCloseNodeCriteriaModal}
       />
     </div>
   );
