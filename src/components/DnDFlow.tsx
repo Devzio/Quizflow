@@ -9,6 +9,7 @@ import { TextNode } from './node/TextNode';
 import { StartNode } from './node/StartNode';
 import StraightEdge from './edge/StraightEdge';
 import CustomEdge from './edge/CustomEdge';
+import CurvedEdge from './edge/CurvedEdge';
 import { Moon, Sun, Undo, Redo } from "lucide-react";
 import { Sidebar } from './Sidebar';
 import { useDnD } from './DnDContext';
@@ -29,7 +30,8 @@ const nodeTypes: NodeTypes = {
 
 const edgeTypes: EdgeTypes = {
   'straightEdge': StraightEdge,
-  'edgecustom': CustomEdge
+  'edgecustom': CustomEdge,
+  'curved': CurvedEdge
 };
 
 // Define more specific node type for our app
@@ -121,16 +123,20 @@ const DnDFlow = () => {
     },
     [nodes, setEdges, updateHistory]
   );
-
   const onConnectWithHistory = useCallback(
     (params: Edge | Connection) => {
       setEdges(prevEdges => {
+        // Get the source node to determine if it's a start node
+        const sourceNode = nodes.find(node => node.id === params.source);
+        const isStartNode = sourceNode?.type === 'start';
+
         const newEdges = addEdge(
           {
             ...params,
             id: GenerateRandomPk().toString(),
             animated: true,
-            type: "edgecustom",
+            // Use curved edge type if connection is from a start node, otherwise use custom edge
+            type: isStartNode ? "curved" : "edgecustom",
           },
           prevEdges
         ) as typeof prevEdges;
@@ -291,6 +297,38 @@ const DnDFlow = () => {
   const handleCloseNodeCriteriaModal = useCallback(() => {
     setShowNodeCriteriaModal(false);
   }, []);
+
+  // Function to update edge types based on source nodes
+  const updateEdgeTypes = useCallback(() => {
+    setEdges(prevEdges => {
+      let edgesChanged = false;
+
+      const updatedEdges = prevEdges.map(edge => {
+        // Find the source node
+        const sourceNode = nodes.find(node => node.id === edge.source);
+        const isStartNode = sourceNode?.type === 'start';
+
+        // If this is an edge from a start node and it's not already a curved edge
+        if (isStartNode && edge.type !== 'curved') {
+          edgesChanged = true;
+          return {
+            ...edge,
+            type: 'curved'
+          };
+        }
+
+        return edge;
+      });
+
+      // Only return the new array if changes were made
+      return edgesChanged ? updatedEdges : prevEdges;
+    });
+  }, [nodes, setEdges]);
+
+  // Call updateEdgeTypes when nodes change
+  useEffect(() => {
+    updateEdgeTypes();
+  }, [nodes, updateEdgeTypes]);
 
   return (
     <div className="dndflow">

@@ -5,6 +5,7 @@ type JsonNode = {
     label: string;
     fields?: any;
     question?: any;
+    selectedCriteria?: NodeCriterion[];
   };
   position: {
     x: number;
@@ -19,12 +20,32 @@ type EdgeCriterion = {
   label: string;
 };
 
+// Type for node criterion in selectedCriteria array
+type NodeCriterion = {
+  id: string;
+  value: string;
+  label: string;
+};
+
 // Type for edge trigger criteria data structure
 type EdgeTriggerCriteria = {
   model: string;
   pk: string | number;
   fields: {
     edge: string | number;
+    choice?: string;
+    value?: string;
+    criterionId?: string;
+    [key: string]: unknown;
+  };
+};
+
+// Type for node trigger criteria data structure
+type NodeTriggerCriteria = {
+  model: string;
+  pk: string | number;
+  fields: {
+    node: string;
     choice?: string;
     value?: string;
     criterionId?: string;
@@ -82,7 +103,8 @@ export function convertJson(input: any): JsonJson {
   const questions = input.filter((item: any) => item.model === 'questionnaire.question');
   const nodesRaw = input.filter((item: any) => item.model === 'questionnaire.node');
   const edgesRaw = input.filter((item: any) => item.model === 'questionnaire.edge');
-  const criteria = input.filter((item: any) => item.model === 'questionnaire.edgetriggercriteria');
+  const edgeCriteria = input.filter((item: any) => item.model === 'questionnaire.edgetriggercriteria');
+  const nodeCriteria = input.filter((item: any) => item.model === 'questionnaire.nodetriggercriteria');
 
   const questionMap = new Map<string, any>();
   questions.forEach((q: any) => {
@@ -90,7 +112,7 @@ export function convertJson(input: any): JsonJson {
   });
 
   const labelMap = new Map<string, string>();  // 🔧 number → string
-  criteria.forEach((c: any) => {
+  edgeCriteria.forEach((c: any) => {
     labelMap.set(String(c.fields.edge), c.fields.choice?.replace('Boolean ', '') ?? '');
   });
 
@@ -102,6 +124,20 @@ export function convertJson(input: any): JsonJson {
     if (!childMap.has(start)) childMap.set(start, []);
     childMap.get(start)?.push(end);
     edgeMap.set(`${start}->${end}`, labelMap.get(String(e.pk)) || '');
+  });
+
+  // Create a map to store node criteria by node id
+  const nodeCriteriaMap = new Map<string, NodeCriterion[]>();
+  nodeCriteria.forEach((c: any) => {
+    const nodeId = String(c.fields.node);
+    if (!nodeCriteriaMap.has(nodeId)) {
+      nodeCriteriaMap.set(nodeId, []);
+    }
+    nodeCriteriaMap.get(nodeId)?.push({
+      id: c.fields.criterionId || c.pk.toString(),
+      value: c.fields.value || c.fields.choice || '',
+      label: c.fields.choice || ''
+    });
   });
 
   const positioned = new Set<string>();
@@ -127,6 +163,8 @@ export function convertJson(input: any): JsonJson {
         label,
         fields,
         question: questionObject || null,
+        // Add node criteria if available
+        selectedCriteria: nodeCriteriaMap.get(id) || []
       },
     };
 
@@ -171,11 +209,11 @@ export function convertJson(input: any): JsonJson {
 
   const edges: JsonEdge[] = edgesRaw.map((e: any) => {
     // Find all matching edge trigger criteria for this edge (there could be multiple for multi-select)
-    const edgeCriteriaList = criteria.filter((c: any) => String(c.fields.edge) === String(e.pk));
+    const edgeCriteriaList = edgeCriteria.filter((c: any) => String(c.fields.edge) === String(e.pk));
     
     // Create selectedCriteria array from the criteria objects - only if there are actual criteria
     const selectedCriteria: EdgeCriterion[] = edgeCriteriaList.length > 0 
-      ? edgeCriteriaList.map(c => ({
+      ? edgeCriteriaList.map((c: any) => ({
           id: c.fields.criterionId || c.pk.toString(),
           value: c.fields.value || c.fields.choice || '',
           label: c.fields.choice || ''

@@ -284,9 +284,9 @@ body {
   flex-direction: column;
   gap: 0.4rem;
   min-width: 8rem;
-  width: 100%;
-  /* max-width: 12rem; */
-  top: -90px;
+  width: auto;
+  max-width: 12rem;
+  top: -100px;
   left: 0px;
 }
 
@@ -687,7 +687,7 @@ body {
   border-radius: 4px;
   border: 1px solid #ccc;
   background-color: white;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .node-criteria-indicators {

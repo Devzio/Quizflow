@@ -1,6 +1,3 @@
-import { EdgeCriterion } from './edgeCriteriaService';
-
-// Define our node criterion interface (similar to EdgeCriterion for consistency)
 export interface NodeCriterion {
   id: string;
   value: string;

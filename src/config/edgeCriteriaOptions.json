@@ -21,8 +21,8 @@
   },
   {
     "id": "bmi_lt",
-    "value": "bmi_lt",
-    "label": "BMI less than"
+    "value": "20",
+    "label": "BMI less than 20"
   },
   {
     "id": "gender_female",
@@ -43,6 +43,11 @@
     "id": "list_value_set",
     "value": "list_value_set",
     "label": "List value set"
+  },
+  {
+    "id": "1747616673381",
+    "value": "new_criteria",
+    "label": "New Criteria"
   },
   {
     "id": "bool_no",
