@@ -33,7 +33,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
     const fileName = file.name;
 
     if (file.name && file.name.endsWith('.json')) {
-      const nameWithoutExtension = file.name.endsWith('.flow.json')?file.name.substring(0, file.name.length - 10):file.name.substring(0, file.name.length - 5);
+      const nameWithoutExtension = file.name.endsWith('.flow.json') ? file.name.substring(0, file.name.length - 10) : file.name.substring(0, file.name.length - 5);
       if (nameWithoutExtension) {
         setQuestionnaireName(nameWithoutExtension);
       }
@@ -111,6 +111,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
     }
     if (saveFn == exportToJsonFile) {
       exportToJsonFile(questionnaireName);
+      toast.success(`Flow saved as ${questionnaireName}.json`);
       toast.success(`Flow saved as ${questionnaireName}.json`);
     }
   };

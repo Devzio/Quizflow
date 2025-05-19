@@ -9,6 +9,7 @@ import { TextNode } from './node/TextNode';
 import { StartNode } from './node/StartNode';
 import StraightEdge from './edge/StraightEdge';
 import CustomEdge from './edge/CustomEdge';
+import CurvedEdge from './edge/CurvedEdge';
 import { Moon, Sun, Undo, Redo } from "lucide-react";
 import { Sidebar } from './Sidebar';
 import { useDnD } from './DnDContext';
@@ -17,6 +18,7 @@ import React, { ReactNode } from 'react';
 import { ConvertExport, ConvertExportWithReactFlowData } from '../utils/export'
 import { GenerateRandomPk, SaveJsonFile } from '../utils/utils';
 import EdgeCriteriaModal from './EdgeCriteriaModal';
+import NodeCriteriaModal from './NodeCriteriaModal';
 
 // Define custom node and edge types
 const nodeTypes: NodeTypes = {
@@ -28,7 +30,8 @@ const nodeTypes: NodeTypes = {
 
 const edgeTypes: EdgeTypes = {
   'straightEdge': StraightEdge,
-  'edgecustom': CustomEdge
+  'edgecustom': CustomEdge,
+  'curved': CurvedEdge
 };
 
 // Define more specific node type for our app
@@ -47,10 +50,10 @@ type CustomEdge = Edge & {
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
-  const [history, setHistory] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light'); const [history, setHistory] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [future, setFuture] = useState<{ nodes: CustomNode[]; edges: CustomEdge[] }[]>([]);
   const [showCriteriaModal, setShowCriteriaModal] = useState(false);
+  const [showNodeCriteriaModal, setShowNodeCriteriaModal] = useState(false);
   const reactFlowInstance = useReactFlow();
 
   const [nodes, setNodes] = useNodesState<Node>(initialNodes);
@@ -120,16 +123,20 @@ const DnDFlow = () => {
     },
     [nodes, setEdges, updateHistory]
   );
-
   const onConnectWithHistory = useCallback(
     (params: Edge | Connection) => {
       setEdges(prevEdges => {
+        // Get the source node to determine if it's a start node
+        const sourceNode = nodes.find(node => node.id === params.source);
+        const isStartNode = sourceNode?.type === 'start';
+
         const newEdges = addEdge(
           {
             ...params,
             id: GenerateRandomPk().toString(),
             animated: true,
-            type: "edgecustom",
+            // Use curved edge type if connection is from a start node, otherwise use custom edge
+            type: isStartNode ? "curved" : "edgecustom",
           },
           prevEdges
         ) as typeof prevEdges;
@@ -283,6 +290,46 @@ const DnDFlow = () => {
     setShowCriteriaModal(false);
   };
 
+  const handleOpenNodeCriteriaModal = useCallback(() => {
+    setShowNodeCriteriaModal(true);
+  }, []);
+
+  const handleCloseNodeCriteriaModal = useCallback(() => {
+    setShowNodeCriteriaModal(false);
+  }, []);
+
+  // Function to update edge types based on source nodes
+  const updateEdgeTypes = useCallback(() => {
+    setEdges(prevEdges => {
+      let edgesChanged = false;
+
+      const updatedEdges = prevEdges.map(edge => {
+        // Find the source node
+        const sourceNode = nodes.find(node => node.id === edge.source);
+        const isStartNode = sourceNode?.type === 'start';
+
+        // If this is an edge from a start node and it's not already a curved edge
+        if (isStartNode && edge.type !== 'curved') {
+          edgesChanged = true;
+          return {
+            ...edge,
+            type: 'curved'
+          };
+        }
+
+        return edge;
+      });
+
+      // Only return the new array if changes were made
+      return edgesChanged ? updatedEdges : prevEdges;
+    });
+  }, [nodes, setEdges]);
+
+  // Call updateEdgeTypes when nodes change
+  useEffect(() => {
+    updateEdgeTypes();
+  }, [nodes, updateEdgeTypes]);
+
   return (
     <div className="dndflow">
       <div className='reactflow-layout'>
@@ -338,14 +385,24 @@ const DnDFlow = () => {
               </button>
             </Controls>
           </ReactFlow>
-        </div>
-      </div>
-      <Sidebar colorMode={colorMode} onOpenCriteriaModal={handleOpenCriteriaModal} hasStartNode={hasStartNode} />
+        </div>      </div>
+      <Sidebar
+        colorMode={colorMode}
+        onOpenCriteriaModal={handleOpenCriteriaModal}
+        onOpenNodeCriteriaModal={handleOpenNodeCriteriaModal}
+        hasStartNode={hasStartNode}
+      />
 
       {/* Edge Criteria Modal */}
       <EdgeCriteriaModal
         isOpen={showCriteriaModal}
         onClose={handleCloseCriteriaModal}
+      />
+
+      {/* Node Criteria Modal */}
+      <NodeCriteriaModal
+        isOpen={showNodeCriteriaModal}
+        onClose={handleCloseNodeCriteriaModal}
       />
     </div>
   );
