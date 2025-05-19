@@ -161,15 +161,20 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
     };
   }, [isModalOpen, handleModalClose]);
 
+  // Determine if the node is missing a label
+  const isMissingLabel = !nodeLabel || nodeLabel.trim() === '';
+
   return (
     <div
       ref={nodeRef}
       style={{ width: '100%', height: '100%' }}
       onContextMenu={onNodeContextMenu}
     >
-      <Handle type="target" position={Position.Top} />      <div className='textNode'>
-        <span>{data.label || "(No Question Set)"}</span>
-      </div>      {isModalOpen && (
+      <Handle type="target" position={Position.Top} />
+      <div className={`textNode${isMissingLabel ? ' node-label-missing' : ''}`}>
+        <span>{isMissingLabel ? "(No Question Set)" : nodeLabel}</span>
+      </div>
+      {isModalOpen && (
         <foreignObject
           width="300"
           height={selectedCriteria.length > 0 ? 200 : 120}
@@ -197,7 +202,8 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
               <div className="pill-container" ref={pillContainerRef}>
                 {selectedCriteria.map((criterion) => (
                   <div key={criterion.id} className="criterion-pill">
-                    <span>{criterion.label}</span>                    <button
+                    <span>{criterion.label}</span>
+                    <button
                       onClick={(e) => handleRemoveCriterion(criterion.value, e)}
                       className="remove-pill remove_svg_style nodrag nopan"
                     >
@@ -206,7 +212,8 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
                   </div>
                 ))}
               </div>
-            )}            <select
+            )}
+            <select
               value=""
               onChange={handleSelectChange}
               className="node-criteria-dropdown nodrag nopan"

@@ -199,7 +199,7 @@ const DnDFlow = () => {
         const typedNewNode = {
           ...newNode,
           data: {
-            label: type === 'text' ? '(New Question)' : ""
+            label: type === 'text' ? '' : ""
           }
         } as typeof prevNodes[0];
 

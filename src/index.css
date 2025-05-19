@@ -138,9 +138,24 @@ body,
 .color-mode-toggle.dark {
   background-color: #222;
   color: #fff;
+
 }
 
- 
+.edge-label-missing rect {
+  color: #222 !important;
+  fill: #ffe066 !important;
+}
+
+.node-label-missing {
+  background: #ffe066 !important;
+  color: #222 !important;
+  border-radius: 4px;
+  padding: 2px 6px;
+  /* font-weight: bold; */
+}
+.react-flow__node:has(.node-label-missing){
+  background: #ffe066 !important;
+}
 html,
 body {
   margin: 0;

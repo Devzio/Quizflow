@@ -41,6 +41,10 @@ export default function CustomEdge({
   const inputRef = useRef<HTMLInputElement>(null); // Add reference for the input field
   const pillContainerRef = useRef<HTMLDivElement>(null); // Add reference for the pill container
 
+  // Determine if the edge label is missing or is the default '(No Answer)'
+  const renderedLabel = edgeLabel && edgeLabel.trim() !== '' ? edgeLabel : '(No Answer)';
+  const isMissingLabel = !edgeLabel || edgeLabel.trim() === '' || renderedLabel === '(No Answer)' || renderedLabel === '(auto reconnected)';
+
   // Function to refresh criteria options
   const refreshCriteriaOptions = useCallback(() => {
     console.log('Refreshing criteria options in edge');
@@ -218,8 +222,8 @@ export default function CustomEdge({
       <EdgeText
         x={labelX}
         y={labelY}
-        label={edgeLabel || '(No Answer)'}
-        className="edge-label"
+        label={renderedLabel}
+        className={`edge-label${isMissingLabel ? ' edge-label-missing' : ''}`}
         onContextMenu={handleContextMenu}
       />
       {isModalOpen && (
