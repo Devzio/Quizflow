@@ -119,16 +119,6 @@ const ToolBar: React.FC<ToolBarProps> = ({
   return (
     <div
       className={`toolbar ${colorMode === 'dark' ? 'dark' : ''}`}
-      style={{
-        padding: '0.5rem',
-        display: 'flex',
-        gap: '10px',
-        borderBottomColor: colorMode === 'dark' ? '#444' : 'grey',
-        borderBottomWidth: '1px',
-        borderBottomStyle: 'solid',
-        backgroundColor: colorMode === 'dark' ? '#222' : '#fff',
-        alignItems: 'center',
-      }}
     >
       <span style={{ fontWeight: 'bold', color: colorMode === 'dark' ? '#fff' : '#222' }}>
         Flow Name:

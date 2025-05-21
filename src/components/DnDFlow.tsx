@@ -19,6 +19,7 @@ import { ConvertExport, ConvertExportWithReactFlowData } from '../utils/export'
 import { GenerateRandomPk, SaveJsonFile } from '../utils/utils';
 import EdgeCriteriaModal from './EdgeCriteriaModal';
 import NodeCriteriaModal from './NodeCriteriaModal';
+import { toast } from 'react-toastify';
 
 // Define custom node and edge types
 const nodeTypes: NodeTypes = {
@@ -129,6 +130,15 @@ const DnDFlow = () => {
         // Get the source node to determine if it's a start node
         const sourceNode = nodes.find(node => node.id === params.source);
         const isStartNode = sourceNode?.type === 'start';
+
+        // If connecting from a start node, only allow one outgoing edge
+        if (isStartNode) {
+          const alreadyConnected = prevEdges.some(e => e.source === params.source);
+          if (alreadyConnected) {
+            toast.warn('Start node can only connect to one node.');
+            return prevEdges; // Do not add another edge
+          }
+        }
 
         const newEdges = addEdge(
           {
