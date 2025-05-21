@@ -149,7 +149,7 @@ export function convertJson(input: any): JsonJson {
     if (positioned.has(id)) return;
     const raw = nodesRaw.find((n: any) => n.pk === id);
     const fields = raw.fields;
-    const label = questionMap.get(raw?.fields?.question)?.title || 'No label';
+    const label = questionMap.get(raw?.fields?.question)?.title || '';
     const questionObject = questions.find((q: any) => q.pk === raw?.fields?.question);
     const isDeadEnd = questionObject?.fields?.type === 'dead_end';
 

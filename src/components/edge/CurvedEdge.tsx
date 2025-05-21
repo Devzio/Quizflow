@@ -1,14 +1,12 @@
 import { BaseEdge, EdgeProps, getBezierPath } from '@xyflow/react';
 
 export default function CurvedEdge({
-  id,
   sourceX,
   sourceY,
   targetX,
   targetY,
   sourcePosition,
   targetPosition,
-  style = {},
   markerEnd,
 }: EdgeProps) {
   const [edgePath] = getBezierPath({
