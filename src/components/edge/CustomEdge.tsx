@@ -114,16 +114,19 @@ export default function CustomEdge({
   };
 
   const handleModalClose = useCallback(() => {
-    // Update the edge data with the new label and all selected criteria
+    // Always get the latest label from the input field
+    const latestLabel = inputRef.current ? inputRef.current.value : edgeLabel;
+    setEdgeLabel(latestLabel); // keep state in sync
+
     setEdges(edges =>
       edges.map(edge =>
         edge.id === id
           ? {
             ...edge,
-            label: edgeLabel, // Set the label at the top level too
+            label: latestLabel, // Use the latest label
             data: {
               ...edge.data,
-              label: edgeLabel,
+              label: latestLabel,
               selectedCriteria: selectedCriteria,
               // Keep edgeCriteria for backward compatibility
               edgeCriteria: selectedCriteria[0]?.value || ''
