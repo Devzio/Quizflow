@@ -78,6 +78,7 @@ export type ReactFlowEdge = {
 export type ModelEdgeFields = {
   start?: string;
   end?: string;
+  label?: string;
   [key: string]: any;
 }
 
@@ -91,5 +92,6 @@ export type ModelEdgeTriggerCriteria = {
 export type ModelEdgeTriggerCriteriaFields = {
   edge: number | string; 
   choice?: string;
+  config?: object;
   [key: string]: any;
 }

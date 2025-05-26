@@ -18,8 +18,12 @@ enum Model {
   Question = "questionnaire.question",
   Edge = "questionnaire.edge",
   EdgetriggerCriteria = "questionnaire.edgetriggercriteria",
-  NodeTriggerCriteria = "questionnaire.nodetriggercriteria",
-  QuestionTag = "questionnaire.questiontag"
+  QuestionTag = "questionnaire.questiontag",
+
+  // not support:
+  QuestionLabel = "questionnaire.questionlabel",
+  QuestionValidator = "questionnaire.questionvalidator",
+  QuestionnaireGraphSubmissionAction = "questionnaire.questionnairegraphsubmissionaction",
 }
 
 export function ConvertExport(questionnareName: string, nodes: Node[], edges: Edge[]): string {
@@ -191,7 +195,8 @@ function convertEdge(includeFlowData: boolean, edge: Edge) {
     pk: Number.isNaN(+edge.id) ? edge.id : +edge.id,
     fields: {
       start: edge.source,
-      end: edge.target
+      end: edge.target,
+      label: edge.label || edge.data?.label || ''
     } as ModelEdgeFields
   }
 
@@ -211,7 +216,6 @@ function convertEdge(includeFlowData: boolean, edge: Edge) {
     _edge.reactflow = {
       animated: edge.animated,
       type: edge.type,
-      label: edge.label || edge.data?.label || '', // Preserve edge label in reactflow data
     } as ReactFlowEdge;
   }
 
@@ -238,7 +242,7 @@ const convertEdgeTriggerCriteria = (edge: Edge) => {
         model: Model.EdgetriggerCriteria,
         pk: GenerateRandomPk(),
         fields: {
-          edge: edge.id,
+          edge: parseInt(edge.id),
           choice: criterion.label || "",
           value: criterion.value || "",
           criterionId: criterion.id || "",
@@ -255,7 +259,7 @@ const convertEdgeTriggerCriteria = (edge: Edge) => {
     const _edgeTC = { ...edgetriggercriteria };
 
     // Ensure the edge ID is correctly linked
-    _edgeTC.fields.edge = edge.id;
+    _edgeTC.fields.edge = parseInt(edge.id);
 
     // Only update the choice if it's a criterion, not just an edge label
     if (edge.data?.selectedCriteria && edge.data?.label && _edgeTC.fields.choice !== edge.data?.label.toString()) {

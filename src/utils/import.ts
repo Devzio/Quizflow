@@ -236,7 +236,7 @@ export function convertJson(input: any): JsonJson {
       : [];
     
     // Use the edge's saved label if available, or create a default one
-    const customLabel = e.reactflow?.label || '';
+    const customLabel = e.fields?.label || '';
     
     return {
       id: e.pk.toString(),
