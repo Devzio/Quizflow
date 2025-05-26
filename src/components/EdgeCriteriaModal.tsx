@@ -4,7 +4,6 @@ import {
   getAllCriteria,
   addCriterion,
   updateCriterion,
-  deleteCriterion,
   EdgeCriterion,
   addChangeListener,
   removeChangeListener
@@ -24,16 +23,25 @@ interface CriterionFormModalProps {
   isEditMode: boolean;
 }
 
-function CriterionFormModal({ isOpen, onClose, criterion, onSubmit, isEditMode }: CriterionFormModalProps) {
+function CriterionFormModal({ isOpen, onClose, criterion, onSubmit, isEditMode, criteria }: CriterionFormModalProps & { criteria: EdgeCriterion[] }) {
   const [formData, setFormData] = useState<EdgeCriterion>(criterion);
+  const [selectedId, setSelectedId] = useState<string>("");
 
   useEffect(() => {
     setFormData(criterion);
-  }, [criterion]);
+    setSelectedId("");
+  }, [criterion, isEditMode]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value;
+    setSelectedId(id);
+    const found = criteria.find(c => c.id === id);
+    setFormData(found ? { ...found } : { id, value: '', label: '' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,35 +58,59 @@ function CriterionFormModal({ isOpen, onClose, criterion, onSubmit, isEditMode }
       className="criterion-form-modal"
     >
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="value">Value:</label>
-          <input
-            type="text"
-            id="value"
-            name="value"
-            value={formData.value}
-            onChange={handleInputChange}
-            placeholder="e.g. authenticated"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="label">Label:</label>
-          <input
-            type="text"
-            id="label"
-            name="label"
-            value={formData.label}
-            onChange={handleInputChange}
-            placeholder="e.g. Authenticated"
-            required
-          />
-        </div>
-
+        {!isEditMode && (
+          <div className="form-group">
+            <label htmlFor="criterion-id">Criterion ID:</label>
+            <select
+              id="criterion-id"
+              value={selectedId}
+              onChange={handleIdChange}
+              required
+            >
+              <option value="">Select existing criterion ID</option>
+              {criteria.map(c => (
+                <option key={c.id} value={c.id}>{c.id}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {isEditMode && (
+          <div className="form-group">
+            <label>Criterion ID:</label>
+            <div>{formData.id}</div>
+          </div>
+        )}
+        {(isEditMode || selectedId) && (
+          <>
+            <div className="form-group">
+              <label htmlFor="value">Value:</label>
+              <input
+                type="text"
+                id="value"
+                name="value"
+                value={formData.value}
+                onChange={handleInputChange}
+                placeholder="e.g. authenticated"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="label">Label:</label>
+              <input
+                type="text"
+                id="label"
+                name="label"
+                value={formData.label}
+                onChange={handleInputChange}
+                placeholder="e.g. Authenticated"
+                required
+              />
+            </div>
+          </>
+        )}
         <div className="form-buttons">
-          <button type="submit">{isEditMode ? 'Update' : 'Add'}</button>
-          <button type="button" onClick={onClose}>Cancel</button>
+          <button type="submit" className="toolbar-btn" disabled={!isEditMode && !selectedId}>{isEditMode ? 'Update' : 'Add'}</button>
+          <button type="button" className="toolbar-btn" onClick={onClose}>Cancel</button>
         </div>
       </form>
     </Modal>
@@ -137,8 +169,15 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
   };
 
   const handleDelete = (id: string) => {
-    console.log('Deleting criterion:', id);
-    deleteCriterion(id);
+    // Only clear value and label, keep the id
+    setCriteria(prevCriteria => prevCriteria.map(c =>
+      c.id === id ? { ...c, value: '', label: '' } : c
+    ));
+    // If you want to persist this change, also update the storage/service:
+    const crit = criteria.find(c => c.id === id);
+    if (crit) {
+      updateCriterion({ ...crit, value: '', label: '' });
+    }
   };
 
   const handleSubmitCriterion = (criterion: EdgeCriterion) => {
@@ -161,7 +200,7 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
         className="criteria-modal"
       >
         <div className="action-buttons">
-          <button onClick={handleOpenAddModal}>
+          <button onClick={handleOpenAddModal} className="toolbar-btn">
             <Plus className="" size={14} />
             Add New Criterion
           </button>
@@ -169,19 +208,19 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
         <h3>Edge Criteria List</h3>
 
         <div className="criteria-list">
-          {criteria.length === 0 ? (
+          {criteria.filter(criterion => criterion.value && criterion.label).length === 0 ? (
             <p>No criteria available. Click "Add New Criterion" to create one.</p>
           ) : (
             <ul>
-              {criteria.map(criterion => (
+              {criteria.filter(criterion => criterion.value && criterion.label).map(criterion => (
                 <li key={criterion.id}>
                   <div className="criterion-item">
                     <div className="criterion-info">
                       <strong>{criterion.label}</strong> ({criterion.value})
                     </div>
                     <div className="criterion-actions">
-                      <button onClick={() => handleEdit(criterion)}><Pen className="" size={14} /></button>
-                      <button onClick={() => handleDelete(criterion.id)}><Trash2 className="" size={14} /></button>
+                      <button onClick={() => handleEdit(criterion)} className="toolbar-btn"><Pen className="" size={14} /></button>
+                      <button onClick={() => handleDelete(criterion.id)} className="toolbar-btn"><Trash2 className="" size={14} /></button>
                     </div>
                   </div>
                 </li>
@@ -190,13 +229,13 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
           )}
         </div>
       </Modal>
-
       <CriterionFormModal
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
         criterion={currentCriterion}
         onSubmit={handleSubmitCriterion}
         isEditMode={isEditMode}
+        criteria={criteria}
       />
     </>
   );

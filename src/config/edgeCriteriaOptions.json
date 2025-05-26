@@ -1,7 +1,7 @@
 [
   {
-    "id": "age_gte",
-    "value": "age_gte_18",
+    "id": "age_gte_18",
+    "value": "age_gte",
     "label": "Age greater than or equal to 18"
   },
   {
@@ -15,14 +15,14 @@
     "label": "Authenticated"
   },
   {
-    "id": "bmi_gte",
+    "id": "bmi_gte_normal",
     "value": "bmi_gte",
-    "label": "BMI greater than or equal"
+    "label": "BMI greater than or equal to normal"
   },
   {
-    "id": "bmi_lt",
-    "value": "20",
-    "label": "BMI less than 20"
+    "id": "bmi_lt_normal",
+    "value": "bmi_lt",
+    "label": "BMI less than normal"
   },
   {
     "id": "gender_female",
@@ -43,11 +43,6 @@
     "id": "list_value_set",
     "value": "list_value_set",
     "label": "List value set"
-  },
-  {
-    "id": "1747616673381",
-    "value": "new_criteria",
-    "label": "New Criteria"
   },
   {
     "id": "bool_no",

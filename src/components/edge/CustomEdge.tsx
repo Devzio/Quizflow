@@ -279,6 +279,7 @@ export default function CustomEdge({
             >
               <option value="">Select Edge Criteria</option>
               {criteriaOptions
+                .filter(option => option.value && option.label)
                 .filter(option => !selectedCriteria.some(c => c.value === option.value))
                 .map((option) => (
                   <option key={option.id} value={option.value}>
