@@ -46,9 +46,14 @@ body,
   width: 100%;
   text-align: center;
   justify-content: center;
+  padding: 0.7rem 0.4rem 0.5rem;
 }
 
 
+
+.react-flow__node{
+  padding: 0;
+}
 
 .btn-delete{
   background-color: rgb(227, 227, 227);
@@ -401,7 +406,7 @@ body {
   color: white;
   font-weight: bold;
   border-radius: 5px;
-  padding: 0px;
+  padding: 0.6rem 0.4rem;
   width: 8rem;
 }
 
@@ -410,7 +415,7 @@ body {
   color: white;
   font-weight: bold;
   border-radius: 5px;
-  padding: 0px;
+  padding: 0.6rem 0.4rem;
   width: 8rem;
 }
 

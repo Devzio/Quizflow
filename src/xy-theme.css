@@ -1,13 +1,12 @@
 /* xyflow theme files. Delete these to start from our base */
- 
+/* Built-in Variables see https://reactflow.dev/learn/customization/theming */
+
 .react-flow {
   /* Custom Variables */
   --xy-theme-selected: #2296F3;
   --xy-theme-hover: #C5C5C5;
-  --xy-theme-edge-hover: black;
+  --xy-theme-edge-hover: rgb(90, 90, 90);
   --xy-theme-color-focus: #E8E8E8;
-
-  /* Built-in Variables see https://reactflow.dev/learn/customization/theming */
   --xy-node-border-default: 1px solid #EDEDED;
 
   --xy-node-boxshadow-default: 
@@ -26,12 +25,18 @@
 
 /* Dark Mode Theming */
 .dark .react-flow__node{
-  background-color: rgb(49, 49, 49);
+  background-color: rgb(72, 72, 72);
   --xy-node-boxshadow-default: 
   0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.05), /* light shadow */
   0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.13), /* medium shadow */
   0px 0.51px 1.01px 0px rgba(255, 255, 255, 0.2);  /* smallest shadow */  
   --xy-theme-color-focus: #535353;
+  --xy-edge-stroke-default: #396cc5 !important; /* lighter edge color for dark mode */
+}
+
+.react-flow.dark  {
+  /* --xy-background-color: #23272f !important; */
+  --xy-background-pattern-color: #3f3f3f !important;  /* lighter dots for dark mode */
 }
 
 /* Customizing Default Theming */
@@ -116,4 +121,38 @@
   border-radius: 0;
   width: 5px;
   height: 5px;
+}
+
+/* Dark mode styles for edge/node criteria menus */
+.dark .modal-content_edge,
+.dark .modal-content_node {
+  background-color: rgb(59, 59, 59);
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+.dark .modal-content_edge input,
+.dark .modal-content_edge select,
+.dark .modal-content_node input,
+.dark .modal-content_node select {
+  background-color: #23272f;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+.dark .modal-content_edge .btn-confirmEdge,
+.dark .modal-content_node .btn-confirmEdge {
+  background-color: #388e3c;
+  color: #fff;
+}
+.dark .modal-content_edge .btn-deleteEdge,
+.dark .modal-content_node .btn-deleteEdge {
+  background-color: #b71c1c;
+  color: #fff;
+}
+.dark .modal-content_edge .btn-deleteEdge:hover,
+.dark .modal-content_node .btn-deleteEdge:hover {
+  background-color: #9c1717;
+}
+.dark .modal-content_edge .btn-confirmEdge:hover,
+.dark .modal-content_node .btn-confirmEdge:hover {
+  background-color: #307a34;
 }
