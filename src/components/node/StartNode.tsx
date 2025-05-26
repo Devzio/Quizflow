@@ -1,5 +1,6 @@
 import { Handle, Position, Node, NodeProps } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
+import { X } from 'lucide-react';
 
 type StartNode = Node<{ label: string }, 'text'>;
 
@@ -10,7 +11,9 @@ export function StartNode({ id }: NodeProps<StartNode>) {
   };
   return (
     <>
-      <button onClick={onDelete} className='btn-delete'>X</button>
+      <button onClick={onDelete} className='remove-pill btn-delete'>
+        <X size={16} />
+      </button>
       <div className='textNode start-node'>
         <span>Start</span>
       </div>
