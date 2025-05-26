@@ -123,36 +123,3 @@
   height: 5px;
 }
 
-/* Dark mode styles for edge/node criteria menus */
-.dark .modal-content_edge,
-.dark .modal-content_node {
-  background-color: rgb(59, 59, 59);
-  color: #e0e0e0;
-  border: 1px solid #444;
-}
-.dark .modal-content_edge input,
-.dark .modal-content_edge select,
-.dark .modal-content_node input,
-.dark .modal-content_node select {
-  background-color: #23272f;
-  color: #e0e0e0;
-  border: 1px solid #555;
-}
-.dark .modal-content_edge .btn-confirmEdge,
-.dark .modal-content_node .btn-confirmEdge {
-  background-color: #388e3c;
-  color: #fff;
-}
-.dark .modal-content_edge .btn-deleteEdge,
-.dark .modal-content_node .btn-deleteEdge {
-  background-color: #b71c1c;
-  color: #fff;
-}
-.dark .modal-content_edge .btn-deleteEdge:hover,
-.dark .modal-content_node .btn-deleteEdge:hover {
-  background-color: #9c1717;
-}
-.dark .modal-content_edge .btn-confirmEdge:hover,
-.dark .modal-content_node .btn-confirmEdge:hover {
-  background-color: #307a34;
-}

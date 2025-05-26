@@ -16,7 +16,6 @@ export function Sidebar({ colorMode, onOpenCriteriaModal, onOpenNodeCriteriaModa
     setType(nodeType);
   };
 
-  // console.log(colorMode)
 
   return (
     <div className={`sidebar ${colorMode === 'dark' ? 'dark' : ''}`}>

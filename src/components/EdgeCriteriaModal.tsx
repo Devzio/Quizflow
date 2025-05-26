@@ -63,6 +63,7 @@ function CriterionFormModal({ isOpen, onClose, criterion, onSubmit, isEditMode, 
             <label htmlFor="criterion-id">Criterion ID:</label>
             <select
               id="criterion-id"
+              className='node-criteria-dropdown select'
               value={selectedId}
               onChange={handleIdChange}
               required
@@ -109,8 +110,8 @@ function CriterionFormModal({ isOpen, onClose, criterion, onSubmit, isEditMode, 
           </>
         )}
         <div className="form-buttons">
-          <button type="submit" className="toolbar-btn" disabled={!isEditMode && !selectedId}>{isEditMode ? 'Update' : 'Add'}</button>
-          <button type="button" className="toolbar-btn" onClick={onClose}>Cancel</button>
+          <button type="submit" className="btn btn_add-edit" disabled={!isEditMode && !selectedId}>{isEditMode ? 'Update' : 'Add'}</button>
+          <button type="button" className="btn btn_cancel" onClick={onClose}>Cancel</button>
         </div>
       </form>
     </Modal>
@@ -200,7 +201,7 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
         className="criteria-modal"
       >
         <div className="action-buttons">
-          <button onClick={handleOpenAddModal} className="toolbar-btn">
+          <button onClick={handleOpenAddModal} className="btn btn_add-criterion">
             <Plus className="" size={14} />
             Add New Criterion
           </button>
@@ -219,8 +220,8 @@ export default function EdgeCriteriaModal({ isOpen, onClose }: EdgeCriteriaModal
                       <strong>{criterion.label}</strong> ({criterion.value})
                     </div>
                     <div className="criterion-actions">
-                      <button onClick={() => handleEdit(criterion)} className="toolbar-btn"><Pen className="" size={14} /></button>
-                      <button onClick={() => handleDelete(criterion.id)} className="toolbar-btn"><Trash2 className="" size={14} /></button>
+                      <button onClick={() => handleEdit(criterion)} className="btn btn_edit"><Pen className="" size={14} /></button>
+                      <button onClick={() => handleDelete(criterion.id)} className="btn btn_delete"><Trash2 className="" size={14} /></button>
                     </div>
                   </div>
                 </li>
