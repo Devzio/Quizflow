@@ -229,6 +229,7 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
             >
               <option value="">Select Node Criteria</option>
               {criteriaOptions
+                .filter(option => option.value && option.label)
                 .filter(option => !selectedCriteria.some(c => c.value === option.value))
                 .map((option) => (
                   <option key={option.id} value={option.value}>
