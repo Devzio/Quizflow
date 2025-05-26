@@ -1,8 +1,8 @@
 
 
 
-export function GenerateRandomPk(prefixValue: number = 290000) {
-    return prefixValue + Math.floor(1000 + Math.random() * 9000)
+export function GenerateRandomPk(prefixNumber: number = 29) {
+    return prefixNumber * 10000 + Math.floor(1000 + Math.random() * 9000)
 } 
 
 
