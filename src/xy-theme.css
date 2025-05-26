@@ -31,7 +31,6 @@
   0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.13), /* medium shadow */
   0px 0.51px 1.01px 0px rgba(255, 255, 255, 0.2);  /* smallest shadow */  
   --xy-theme-color-focus: #535353;
-  --xy-edge-stroke-default: #396cc5 !important; /* lighter edge color for dark mode */
 }
 
 .react-flow.dark  {
@@ -84,10 +83,6 @@
   box-shadow: var(--xy-node-boxshadow-default);
 }
 
-.react-flow__node-group {
-  background-color: rgba(207, 182, 255, 0.4);
-  border-color: #9E86ED;
-}
 
 .react-flow__edge.selectable:hover .react-flow__edge-path,
 .react-flow__edge.selectable.selected .react-flow__edge-path {
@@ -115,11 +110,5 @@
   border: none;
 }
 
-.react-flow__resize-control.handle {
-  background-color: #ffffff;
-  border-color: #9E86ED;
-  border-radius: 0;
-  width: 5px;
-  height: 5px;
-}
+
 
