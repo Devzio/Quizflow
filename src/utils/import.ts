@@ -78,7 +78,18 @@ type JsonJson = {
 };
 
 export function convertJson(input: any): JsonJson {
+  // If this is a .flow file (has nodes/edges arrays), just return them as-is to preserve positions/types
   if (input.nodes && input.edges) {
+    // Defensive: ensure all nodes have position/type, and all edges have type/label
+    const nodes = input.nodes.map((n: any) => ({
+      ...n,
+      position: n.position || { x: 0, y: 0 },
+      type: n.type || 'text',
+      data: {
+        ...n.data,
+        label: n.data?.label ?? '',
+      },
+    }));
     const edges = input.edges.map((e: any) => ({
       ...e,
       type: e.type || 'straightEdge',
@@ -93,7 +104,7 @@ export function convertJson(input: any): JsonJson {
       model: 'questionnairegraph',
       pk: '',
       fields: {},
-      nodes: input.nodes,
+      nodes,
       edges,
     };
   }
@@ -153,11 +164,13 @@ export function convertJson(input: any): JsonJson {
     const questionObject = questions.find((q: any) => q.pk === raw?.fields?.question);
     const isDeadEnd = questionObject?.fields?.type === 'dead_end';
 
+    // --- PATCH: Always use saved type and position if present ---
     const pos = raw.reactflow?.positions ?? { x, y };
+    const nodeType = raw.reactflow?.type || (isDeadEnd ? 'end' : nodeMap.size === 0 ? 'start' : 'text');
 
     const node: JsonNode = {
       id,
-      type: isDeadEnd ? 'end' : nodeMap.size === 0 ? 'start' : 'text',
+      type: nodeType,
       position: pos,
       data: {
         label,

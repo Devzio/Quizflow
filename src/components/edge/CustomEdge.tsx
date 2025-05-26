@@ -25,7 +25,7 @@ export default function CustomEdge({
     targetPosition,
   });
 
-  const { deleteElements, setEdges, getZoom } = useReactFlow();
+  const { deleteElements, setEdges, getZoom, setNodes } = useReactFlow();
 
   const deleteEdge = () => {
     deleteElements({ edges: [{ id }] });
@@ -88,6 +88,18 @@ export default function CustomEdge({
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault(); // Prevent default context menu
+    setEdges((edges) =>
+      edges.map((edge) => ({
+        ...edge,
+        selected: edge.id === id
+      }))
+    );
+    setNodes((nodes) =>
+      nodes.map((node) => ({
+        ...node,
+        selected: false
+      }))
+    );
     setIsModalOpen(true);
   };
 

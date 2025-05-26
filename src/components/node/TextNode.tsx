@@ -75,6 +75,12 @@ export function TextNode({ data, id }: NodeProps<TextNode>) {
         selected: node.id === id
       }))
     );
+    setEdges((edges) =>
+      edges.map((edge) => ({
+        ...edge,
+        selected: false
+      }))
+    );
     setIsModalOpen(true);
   };
 

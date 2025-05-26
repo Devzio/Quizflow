@@ -110,32 +110,24 @@ body,
   outline: none;
 }
 
-/* Add these new styles */
-.color-mode-toggle {
+.btn_color-mode-toggle {
   display: flex;
-  /* position: absolute;
-  bottom: 172px;
-  left: 15px;
-  width: 26px;
-  height: 28px;
-  z-index: 5; */
   height: 25px;
   padding: 4px;
   border-radius: 3px;
   border: none;
   cursor: pointer;
-  /* box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08); */
   justify-content: center;
   align-items: center;
 
 }
 
-.color-mode-toggle.light {
+.btn_color-mode-toggle.light {
   background-color: #fff;
   color: #222;
 }
 
-.color-mode-toggle.dark {
+.btn_color-mode-toggle.dark {
   background-color: #222;
   color: #fff;
 
@@ -207,13 +199,7 @@ body {
   background-color: rgb(26, 26, 26);
   transition: all ease-out 0.1s;
 }
-/* .dndflow .dndnode.input {
-  border-color: #0041d0;
-}
- 
-.dndflow .dndnode.output {
-  border-color: #ff0072;
-} */
+
  
 .dndflow .reactflow-wrapper {
   flex-grow: 1;

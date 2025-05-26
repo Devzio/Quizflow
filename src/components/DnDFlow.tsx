@@ -318,7 +318,7 @@ const DnDFlow = () => {
         const sourceNode = nodes.find(node => node.id === edge.source);
         const isStartNode = sourceNode?.type === 'start';
 
-        // If this is an edge from a start node and it's not already a curved edge
+        // If this is an edge from a start node use curved edge without label
         if (isStartNode && edge.type !== 'curved') {
           edgesChanged = true;
           return {
@@ -350,6 +350,7 @@ const DnDFlow = () => {
           exportToJsonFile={exportToJsonFile}
           colorMode={colorMode}
           fitView={fitViewToContents} // Pass the fitView function to ToolBar
+          hasStartNode={hasStartNode} // Pass hasStartNode to ToolBar
         />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
@@ -389,7 +390,7 @@ const DnDFlow = () => {
               </button>
               <button
                 onClick={toggleColorMode}
-                className={`color-mode-toggle ${colorMode}`}
+                className={`btn_color-mode-toggle ${colorMode}`}
               >
                 {colorMode === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
               </button>
