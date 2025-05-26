@@ -93,17 +93,3 @@ export type ModelEdgeTriggerCriteriaFields = {
   choice?: string;
   [key: string]: any;
 }
-
-export type ModelNodeTriggerCriteria = {
-  model: string,
-  pk: number | string; 
-  fields: ModelNodeTriggerCriteriaFields;
-}
-
-export type ModelNodeTriggerCriteriaFields = {
-  node: string;
-  choice?: string;
-  value?: string;
-  criterionId?: string;
-  [key: string]: any;
-}

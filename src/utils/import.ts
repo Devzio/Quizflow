@@ -115,7 +115,7 @@ export function convertJson(input: any): JsonJson {
   const nodesRaw = input.filter((item: any) => item.model === 'questionnaire.node');
   const edgesRaw = input.filter((item: any) => item.model === 'questionnaire.edge');
   const edgeCriteria = input.filter((item: any) => item.model === 'questionnaire.edgetriggercriteria');
-  const nodeCriteria = input.filter((item: any) => item.model === 'questionnaire.nodetriggercriteria');
+  const nodeCriteria = input.filter((item: any) => item.model === 'questionnaire.questiontag');
 
   const questionMap = new Map<string, any>();
   questions.forEach((q: any) => {
@@ -140,15 +140,17 @@ export function convertJson(input: any): JsonJson {
   // Create a map to store node criteria by node id
   const nodeCriteriaMap = new Map<string, NodeCriterion[]>();
   nodeCriteria.forEach((c: any) => {
-    const nodeId = String(c.fields.node);
-    if (!nodeCriteriaMap.has(nodeId)) {
-      nodeCriteriaMap.set(nodeId, []);
+    const questionUuid = c.fields.question;
+    if (!nodeCriteriaMap.has(questionUuid)) {
+      nodeCriteriaMap.set(questionUuid, []);
     }
-    nodeCriteriaMap.get(nodeId)?.push({
-      id: c.fields.criterionId || c.pk.toString(),
-      value: c.fields.value || c.fields.choice || '',
-      label: c.fields.choice || ''
-    });
+    nodeCriteriaMap.get(questionUuid)?.push(
+      {
+        id: c.pk,
+        value: c.fields.value || c.fields.choice || '', 
+        label: c.fields.choice || ''
+      } as NodeCriterion
+    )
   });
 
   const positioned = new Set<string>();
@@ -177,7 +179,7 @@ export function convertJson(input: any): JsonJson {
         fields,
         question: questionObject || null,
         // Add node criteria if available
-        selectedCriteria: nodeCriteriaMap.get(id) || []
+        selectedCriteria: nodeCriteriaMap.get(questionObject.pk) || []
       },
     };
 
