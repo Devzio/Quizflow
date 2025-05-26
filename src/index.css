@@ -139,9 +139,14 @@ body,
 }
 
 .edge-label-missing rect {
-  color: #222 !important;
   fill: #ffe066 !important;
 }
+
+.edge-label-missing text {
+  fill: #222 !important;
+}
+
+
 
 .node-label-missing {
   background: #ffe066 !important;
@@ -203,6 +208,11 @@ body {
 .sidebar.dark .dndnode:hover {
   background-color: rgb(26, 26, 26);
   transition: all ease-out 0.1s;
+}
+
+.sidebar.dark .dndnode.text{
+  color: white;
+  background-color: #484949;
 }
 
  
