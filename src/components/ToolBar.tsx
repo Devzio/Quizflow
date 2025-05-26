@@ -10,6 +10,7 @@ interface ToolBarProps {
   exportToJsonFile?: (name: string) => void;
   colorMode?: 'light' | 'dark';
   fitView?: () => void;
+  hasStartNode?: boolean;
 }
 
 type SaveFunction = (name: string) => void;
@@ -20,7 +21,8 @@ const ToolBar: React.FC<ToolBarProps> = ({
   saveToJsonFile,
   exportToJsonFile,
   colorMode = 'light',
-  fitView
+  fitView,
+  hasStartNode = true,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [questionnaireName, setQuestionnaireName] = useState<string>("");
@@ -50,8 +52,8 @@ const ToolBar: React.FC<ToolBarProps> = ({
           ...e,
           type: 'edgecustom', // ✅ Force edge type to 'edgecustom'
           data: {
-            ...e.data,
-            selectedCriteria: (e.data as any)?.selectedCriteria ?? [], // ✅ Ensure default selectedCriteria value
+            ...e.data as Record<string, unknown>,
+            selectedCriteria: (e.data && (e.data as Record<string, unknown>).selectedCriteria) ?? [], // ✅ Ensure default selectedCriteria value
           },
         }));
 
@@ -104,14 +106,16 @@ const ToolBar: React.FC<ToolBarProps> = ({
       toast.error("Please set a flow name before saving");
       return;
     }
-
+    if (!hasStartNode) {
+      toast.warn("You must have at least one Start Node in your flow to save or export.");
+      return;
+    }
     if (saveFn == saveToJsonFile) {
       saveToJsonFile(questionnaireName);
       toast.success(`Flow saved as ${questionnaireName}.flow.json`);
     }
     if (saveFn == exportToJsonFile) {
       exportToJsonFile(questionnaireName);
-      toast.success(`Flow saved as ${questionnaireName}.json`);
       toast.success(`Flow saved as ${questionnaireName}.json`);
     }
   };
